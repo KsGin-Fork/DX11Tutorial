@@ -69,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	dc.OutputWindow = hWnd;
 	dc.Windowed = true;
 
-	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
