@@ -55,6 +55,6 @@ c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(615
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54094): note: see previous definition of 'D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(616): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54103): note: see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
-d:\visualstudioworkspace\learn-directx\dx11tutorial\dx11tutorial-simpletriangle\main.cpp(205): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\visualstudioworkspace\learn-directx\dx11tutorial\dx11tutorial-simpletriangle\main.cpp(205): warning C4305: 'initializing': truncation from 'double' to 'float'
-  DX11Tutorial-SimpleTriangle.vcxproj -> D:\VisualStudioWorkSpace\Learn-DirectX\DX11Tutorial\Debug\DX11Tutorial-SimpleTriangle.exe
+d:\visualstudioworkspace\dx11tutorial\dx11tutorial-simpletriangle\main.cpp(205): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\visualstudioworkspace\dx11tutorial\dx11tutorial-simpletriangle\main.cpp(205): warning C4305: 'initializing': truncation from 'double' to 'float'
+  DX11Tutorial-SimpleTriangle.vcxproj -> D:\VisualStudioWorkSpace\DX11Tutorial\Debug\DX11Tutorial-SimpleTriangle.exe
