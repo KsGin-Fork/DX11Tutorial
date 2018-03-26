@@ -1,4 +1,6 @@
-﻿  main.cpp
+﻿  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\trianglePixelShader.cso
+  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\triangleVertexShader.cso
+  main.cpp
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': macro redefinition
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(53655): note: see previous definition of 'DXGI_STATUS_OCCLUDED'
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\dxgitype.h(13): warning C4005: 'DXGI_STATUS_CLIPPED': macro redefinition
@@ -55,6 +57,6 @@ c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(615
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54094): note: see previous definition of 'D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(616): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54103): note: see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
-d:\visualstudioworkspace\dx11tutorial\dx11tutorial-3drender\main.cpp(266): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
-d:\visualstudioworkspace\dx11tutorial\dx11tutorial-3drender\main.cpp(266): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\visualstudioworkspace\dx11tutorial\dx11tutorial-3drender\main.cpp(326): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+d:\visualstudioworkspace\dx11tutorial\dx11tutorial-3drender\main.cpp(326): warning C4305: 'initializing': truncation from 'double' to 'float'
   DX11Tutorial-3DRender.vcxproj -> D:\VisualStudioWorkSpace\DX11Tutorial\Debug\DX11Tutorial-3DRender.exe

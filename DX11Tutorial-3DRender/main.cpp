@@ -13,12 +13,19 @@ const int width = 1920, height = 1080;
 HRESULT CALLBACK WndProc(const HWND hWnd, const UINT uMsg, const WPARAM wParam, const LPARAM lParam);
 
 using namespace std;
+using namespace DirectX;
 
-struct Vertex {
-	DirectX::XMFLOAT3 pos;
-	DirectX::XMFLOAT2 tex;
+struct Vertex
+{
+	XMFLOAT3 pos;
+	XMFLOAT4 color;
 };
 
+struct Constant {
+	XMMATRIX world;
+	XMMATRIX view;
+	XMMATRIX projection;
+};
 
 /**
  * \brief 启动主方法
@@ -29,6 +36,8 @@ struct Vertex {
  * \return 退出码
  */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {
+
+	///////////////////////////////////////////////////////////////// INIT WIN32 ///////////////////////////////////////////////////////
 
 	WNDCLASS wc;
 	ZeroMemory(&wc, sizeof(WNDCLASS));
@@ -54,6 +63,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ShowWindow(hWnd, SW_NORMAL);
 	UpdateWindow(hWnd);
+
+	////////////////////////////////////////////////////////////////////////////////// INIT DX //////////////////////////////////////////////////////////////
 
 	DXGI_SWAP_CHAIN_DESC dc;
 	ZeroMemory(&dc, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -120,68 +131,116 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pImmediateContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
 	D3D11_VIEWPORT dv{ 0 , 0 , width , height , 0 , 1 };
 	pImmediateContext->RSSetViewports(1, &dv);
-	
 
-	static const Vertex vertices[] = {
-			{ DirectX::XMFLOAT3(0.3f,0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f, 1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, -0.3f, 1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, -0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+	//////////////////////////////////////////////////////////////////////// Vertex ///////////////////////////////////////////////////////////////////////
 
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
-//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) }
+	Vertex vertices[] = {
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(0, 0, 1, 1) },
+		{ XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT4(0, 0, 0, 1) },
+		{ XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT4(1, 0, 0, 1) },
+		{ XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT4(0, 1, 0, 1) },
+		{ XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT4(0, 0, 1, 1) },
+		{ XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT4(1, 1, 0, 1) },
+		{ XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT4(0, 1, 1, 1) },
+		{ XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT4(1, 0, 1, 1) }
 	};
 
-
-	// 缓存信息描述
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 6;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 8;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA verticesSourceData;
 	ZeroMemory(&verticesSourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+
 	verticesSourceData.pSysMem = vertices;
-
 	ID3D11Buffer *pVertexBufferObject = nullptr;
-
 	pDevice->CreateBuffer(&vertexBufferDesc, &verticesSourceData, &pVertexBufferObject);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	pImmediateContext->IASetVertexBuffers(0, 1, &pVertexBufferObject, &stride, &offset);
 	pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	/////////////////////////////////////////////////////////////////////// index //////////////////////////////////////////////////////////////
+	UINT indices[] = {
+		// front face
+		0, 1, 2,
+		0, 2, 3,
+
+		// back face
+		4, 6, 5,
+		4, 7, 6,
+
+		// left face
+		4, 5, 1,
+		4, 1, 0,
+
+		// right face
+		3, 2, 6,
+		3, 6, 7,
+
+		// top face
+		1, 5, 6,
+		1, 6, 2,
+
+		// bottom face
+		4, 0, 3,
+		4, 3, 7
+	};
+
+	D3D11_BUFFER_DESC indexDesc;
+	ZeroMemory(&indexDesc, sizeof(indexDesc));
+	indexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexDesc.ByteWidth = sizeof(UINT) * 36;
+
+	D3D11_SUBRESOURCE_DATA indexData;
+	ZeroMemory(&indexData, sizeof(indexData));
+	indexData.pSysMem = indices;
+
+	ID3D11Buffer *pIndexBufferObject = nullptr;
+	hr = pDevice->CreateBuffer(&indexDesc, &indexData, &pIndexBufferObject);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	pImmediateContext->IASetIndexBuffer(pIndexBufferObject, DXGI_FORMAT_R32_UINT, 0);
+
+
+	///////////////////////////////////////////////////////////// Constant ////////////////////////////////////////////////////
+
+	Constant cb = {
+		XMMatrixTranspose(XMMatrixIdentity()) ,
+		XMMatrixTranspose(XMMatrixLookAtLH(
+			XMVectorSet(0.0f, 1.0f, -1.0f, 0.0f),
+			XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+		)),
+		XMMatrixTranspose(XMMatrixPerspectiveFovLH(90, static_cast<FLOAT>(width) / height, 0.1f, 100.0f))
+	};
+
+	D3D11_BUFFER_DESC constantBufferDesc;
+	ZeroMemory(&constantBufferDesc, sizeof(constantBufferDesc));
+	constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	constantBufferDesc.BindFlags = D3D10_BIND_CONSTANT_BUFFER;
+	constantBufferDesc.ByteWidth = sizeof(Constant);
+
+	D3D11_SUBRESOURCE_DATA constantSourceData;
+	ZeroMemory(&constantSourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+	constantSourceData.pSysMem = &cb;
+
+	ID3D11Buffer *pConstantBuffer = nullptr;
+	hr = pDevice->CreateBuffer(&constantBufferDesc, &constantSourceData, &pConstantBuffer);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateConstantBuffer", "ERROR", MB_OK);
+		return hr;
+	}
+	pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+
+	///////////////////////////////////////////////////////// Shader ////////////////////////////////////////////////////////////
 
 	ID3D11VertexShader *pVertexShader = nullptr;
 	ID3D11PixelShader *pPixelShader = nullptr;
@@ -250,7 +309,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "COLOR", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	const UINT numElements = ARRAYSIZE(layout);
 	hr = pDevice->CreateInputLayout(layout, numElements, pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pInputLayout);
@@ -260,6 +319,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	pImmediateContext->IASetInputLayout(pInputLayout);
 
+	////////////////////////////////////////////////////////////////////// MSG ///////////////////////////////////////////////////////////
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 	while (msg.message != WM_QUIT) {
@@ -267,7 +327,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 		pImmediateContext->VSSetShader(pVertexShader, nullptr, 0);
 		pImmediateContext->PSSetShader(pPixelShader, nullptr, 0);
-		pImmediateContext->Draw(6, 0);
+		pImmediateContext->DrawIndexed(36, 0, 0);
 		pSwapChain->Present(0, 0);
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -275,6 +335,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
+	pSamplerState->Release();
+	pShaderResourceView->Release();
+	pConstantBuffer->Release();
 	pSwapChain->Release();
 	pImmediateContext->Release();
 	pRenderTargetView->Release();

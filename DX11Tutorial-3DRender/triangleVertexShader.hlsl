@@ -1,17 +1,25 @@
+cbuffer ConstantBuffer : register(b0) {
+	matrix world;
+	matrix view;
+	matrix projection;
+}
+
 struct vertexInputType {
 	float4 pos : POSITION;
-	float2 texcoord : TEXCOORD0;
+	float4 color : COLOR;
 };
 
 struct pixelInputType {
 	float4 pos : SV_POSITION;
-	float2 texcoord : TEXCOORD0;
+	float4 color : COLOR;
 };
 
-pixelInputType main( vertexInputType input )
-{
+pixelInputType main( vertexInputType input ){
 	pixelInputType output;
 	output.pos = input.pos;
-	output.texcoord = input.texcoord;
+	output.pos = mul(output.pos , world);
+	output.pos = mul(output.pos , view);
+	output.pos = mul(output.pos , projection);
+	output.color = input.color;
 	return output;
 }
