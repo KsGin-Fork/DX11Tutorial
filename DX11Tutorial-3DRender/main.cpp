@@ -120,44 +120,46 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pImmediateContext->OMSetRenderTargets(1, &pRenderTargetView, nullptr);
 	D3D11_VIEWPORT dv{ 0 , 0 , width , height , 0 , 1 };
 	pImmediateContext->RSSetViewports(1, &dv);
+	
 
 	static const Vertex vertices[] = {
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-1.0f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
+			{ DirectX::XMFLOAT3(0.3f,0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+			{ DirectX::XMFLOAT3(0.3f,-0.3f, 1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+			{ DirectX::XMFLOAT3(-0.3f, -0.3f, 1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+			{ DirectX::XMFLOAT3(-0.3f, -0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
 			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.5f) },
-			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
-			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.5f,0.0f) }
+			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f,3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f,1.0f)	, DirectX::XMFLOAT2(1.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,1.0f) },
+//			{ DirectX::XMFLOAT3(-0.3f, 0.3f, 3.0f)	, DirectX::XMFLOAT2(0.0f,0.0f) },
+//			{ DirectX::XMFLOAT3(0.3f,-0.3f, 3.0f)	, DirectX::XMFLOAT2(1.0f,0.0f) }
 	};
 
 
@@ -165,7 +167,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 36;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 6;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA verticesSourceData;
@@ -265,7 +267,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 		pImmediateContext->VSSetShader(pVertexShader, nullptr, 0);
 		pImmediateContext->PSSetShader(pPixelShader, nullptr, 0);
-		pImmediateContext->Draw(36, 0);
+		pImmediateContext->Draw(6, 0);
 		pSwapChain->Present(0, 0);
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
