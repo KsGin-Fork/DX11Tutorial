@@ -18,7 +18,8 @@ using namespace DirectX;
 struct Vertex
 {
 	XMFLOAT3 pos;
-	XMFLOAT4 color;
+	XMFLOAT2 texcoord;
+	XMFLOAT3 normal;
 };
 
 struct Constant {
@@ -135,20 +136,47 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//////////////////////////////////////////////////////////////////////// Vertex ///////////////////////////////////////////////////////////////////////
 
 	Vertex vertices[] = {
-		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(0, 0, 1, 1) },
-		{ XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT4(0, 0, 0, 1) },
-		{ XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT4(1, 0, 0, 1) },
-		{ XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT4(0, 1, 0, 1) },
-		{ XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT4(0, 0, 1, 1) },
-		{ XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT4(1, 1, 0, 1) },
-		{ XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT4(0, 1, 1, 1) },
-		{ XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT4(1, 0, 1, 1) }
+		// 正面
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1) , XMFLOAT3(0.0f , 0.0f , -1.0f)},
+		{ XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(0, 0) , XMFLOAT3(0.0f , 0.0f , -1.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0) , XMFLOAT3(0.0f , 0.0f , -1.0f)},
+		{ XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1) , XMFLOAT3(0.0f , 0.0f , -1.0f)},
+
+		// 背面
+		{ XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(1, 1) , XMFLOAT3(0.0f , 0.0f , +1.0f)},
+		{ XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0) , XMFLOAT3(0.0f , 0.0f , +1.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0) , XMFLOAT3(0.0f , 0.0f , +1.0f)},
+		{ XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(0, 1) , XMFLOAT3(0.0f , 0.0f , +1.0f)},
+
+		// 上面
+		{ XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(0, 1) , XMFLOAT3(0.0f , +1.0f , 0.0f)},
+		{ XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0) , XMFLOAT3(0.0f , +1.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0) , XMFLOAT3(0.0f , +1.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(1, 1) , XMFLOAT3(0.0f , +1.0f , 0.0f)},
+
+		// 下面
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1) , XMFLOAT3(0.0f , -1.0f , 0.0f)},
+		{ XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(1, 0) , XMFLOAT3(0.0f , -1.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(0, 0) , XMFLOAT3(0.0f , -1.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1) , XMFLOAT3(0.0f , -1.0f , 0.0f)},
+
+		// 左侧
+		{ XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(0, 1) , XMFLOAT3(-1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0) , XMFLOAT3(-1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0) , XMFLOAT3(-1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1) , XMFLOAT3(-1.0f , 0.0f , 0.0f)},
+
+		// 右侧
+		{ XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1) , XMFLOAT3(+1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(0, 0) , XMFLOAT3(+1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0) , XMFLOAT3(+1.0f , 0.0f , 0.0f)},
+		{ XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(1, 1) , XMFLOAT3(+1.0f , 0.0f , 0.0f)},
 	};
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 8;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * 24;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA verticesSourceData;
@@ -168,26 +196,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// front face
 		0, 1, 2,
 		0, 2, 3,
-
 		// back face
 		4, 6, 5,
 		4, 7, 6,
-
 		// left face
-		4, 5, 1,
-		4, 1, 0,
-
+		16, 17, 18,
+		16, 18, 19,
 		// right face
-		3, 2, 6,
-		3, 6, 7,
-
+		20, 21, 22,
+		20, 22, 23,
 		// top face
-		1, 5, 6,
-		1, 6, 2,
-
+		8, 9, 10,
+		8, 10, 11,
 		// bottom face
-		4, 0, 3,
-		4, 3, 7
+		12, 14, 13,
+		12, 15, 14
 	};
 
 	D3D11_BUFFER_DESC indexDesc;
@@ -238,7 +261,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(nullptr, "ERROR::CreateConstantBuffer", "ERROR", MB_OK);
 		return hr;
 	}
-	pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
 
 	///////////////////////////////////////////////////////// Shader ////////////////////////////////////////////////////////////
 
@@ -275,10 +297,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	ID3D11SamplerState *pSamplerState = nullptr;
+	ID3D11ShaderResourceView *pShaderResourceView;
+	hr = pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateSampler", "Error", MB_OK);
+		return hr;
+	}
+
+	hr = D3DX11CreateShaderResourceViewFromFile(pDevice, "./triangle.jpg", nullptr, nullptr, &pShaderResourceView, nullptr);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateShaderResourceView", "Error", MB_OK);
+		return hr;
+	}
+
+	pImmediateContext->PSSetShaderResources(0, 1, &pShaderResourceView);
+	pImmediateContext->PSSetSamplers(0, 1, &pSamplerState);
 
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "COLOR", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	const UINT numElements = ARRAYSIZE(layout);
 	hr = pDevice->CreateInputLayout(layout, numElements, pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pInputLayout);
@@ -292,7 +346,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 	while (msg.message != WM_QUIT) {
-		float color[] = { 0.1f , 0.2 , 0.5f , 1.0f };
+		float color[] = { 0.1f , 0.2f , 0.3f , 1.0f };
+
+		cb.world = cb.world * XMMatrixRotationY(0.0001f);
+
+		pImmediateContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
+		pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 		pImmediateContext->VSSetShader(pVertexShader, nullptr, 0);
 		pImmediateContext->PSSetShader(pPixelShader, nullptr, 0);
@@ -304,6 +363,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
+	pSamplerState->Release();
+	pShaderResourceView->Release();
 	pConstantBuffer->Release();
 	pSwapChain->Release();
 	pImmediateContext->Release();

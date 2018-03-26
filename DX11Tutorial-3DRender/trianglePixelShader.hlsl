@@ -1,6 +1,3 @@
-Texture2D tex;
-SamplerState samplerType;
- 
 struct pixelInputType {
 	float4 pos : SV_POSITION;
 	float4 color : COLOR;
