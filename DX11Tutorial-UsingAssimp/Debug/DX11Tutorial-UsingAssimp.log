@@ -1,5 +1,4 @@
-﻿  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\cubePixelShader.cso
-  main.cpp
+﻿  main.cpp
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\dxgitype.h(12): warning C4005: “DXGI_STATUS_OCCLUDED”: 宏重定义
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(53655): note: 参见“DXGI_STATUS_OCCLUDED”的前一个定义
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\dxgitype.h(13): warning C4005: “DXGI_STATUS_CLIPPED”: 宏重定义
@@ -56,5 +55,4 @@ c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(615
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54094): note: 参见“D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS”的前一个定义
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\d3d10.h(616): warning C4005: “D3D10_ERROR_FILE_NOT_FOUND”: 宏重定义
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(54103): note: 参见“D3D10_ERROR_FILE_NOT_FOUND”的前一个定义
-d:\visualstudioworkspace\dx11tutorial\dx11tutorial-usingassimp\main.cpp(146): warning C4129: “ ”: 不可识别的字符转义序列
   DX11Tutorial-UsingAssimp.vcxproj -> D:\VisualStudioWorkSpace\DX11Tutorial\Debug\DX11Tutorial-UsingAssimp.exe

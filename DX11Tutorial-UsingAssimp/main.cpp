@@ -143,8 +143,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//////////////////////////////////////////////////////////////////////// Vertex ///////////////////////////////////////////////////////////////////////
 	Importer imp;
-	const aiScene *scene = imp.ReadFile("./Resources/Low-Poly\ Spider/Only_Spider_with_Animations_Export.blend.x", 
-		aiProcess_GenNormals | aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_FlipWindingOrder );
+	const aiScene *scene = imp.ReadFile("./Resources/Male.obj", 
+		aiProcess_GenNormals | aiProcess_Triangulate | 
+		aiProcess_FixInfacingNormals | aiProcess_FlipWindingOrder | 
+		aiProcess_GenUVCoords | aiProcess_FlipUVs);
 	if (!scene) {
 		MessageBox(nullptr, "ERROR::ReadOBJ", "ERROR", MB_OK);
 		return -1;
@@ -236,16 +238,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	///////////////////////////////////////////////////////////// Constant ////////////////////////////////////////////////////
 
-	XMMATRIX cubeWorld = XMMatrixIdentity() * XMMatrixRotationZ(90.0f);
-
 	Constant cb = {
-		XMMatrixTranspose(cubeWorld) ,
-		XMMatrixTranspose(XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 10.0f, -10.0f, 0.0f),
+		XMMatrixIdentity(),
+		XMMatrixLookAtLH(
+			XMVectorSet(0.0f, 3.0f, -10.0f, 0.0f),
 			XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-		)),
-		XMMatrixTranspose(XMMatrixPerspectiveFovLH(90, static_cast<FLOAT>(width) / height, 0.1f, 1000.0f))
+		),
+		XMMatrixPerspectiveFovLH(90, static_cast<FLOAT>(width) / height, 0.1f, 1000.0f)
 	};
 
 	D3D11_BUFFER_DESC constantBufferDesc;
@@ -346,7 +346,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (msg.message != WM_QUIT) {
 		float color[] = { 0.1f , 0.2f , 0.3f , 1.0f };
 
-		cb.world = cb.world * XMMatrixTranspose(XMMatrixRotationY(-0.0001f));
+		cb.world = cb.world * XMMatrixTranspose(XMMatrixRotationY(0.001f));
 		
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 		pImmediateContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
