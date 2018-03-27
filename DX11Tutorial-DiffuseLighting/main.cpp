@@ -235,10 +235,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	///////////////////////////////////////////////////////////// Constant ////////////////////////////////////////////////////
 
+	XMMATRIX cubeWorld = XMMatrixIdentity();
+	XMMATRIX lightWorld = XMMatrixIdentity() * XMMatrixScaling(0.05f, 0.05f, 0.05f);
+
 	Constant cb = {
-		XMMatrixTranspose(XMMatrixIdentity()) ,
+		XMMatrixTranspose(cubeWorld) ,
 		XMMatrixTranspose(XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 1.0f, -1.0f, 0.0f),
+			XMVectorSet(3.0f, 3.0f, -3.0f, 0.0f),
 			XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 		)),
@@ -264,13 +267,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	///////////////////////////////////////////////////////// Shader ////////////////////////////////////////////////////////////
 
-	ID3D11VertexShader *pVertexShader = nullptr;
-	ID3D11PixelShader *pPixelShader = nullptr;
-	ID3D11InputLayout *pInputLayout = nullptr;
-
 	ID3D10Blob* pErrorMessage = nullptr;
 	ID3D10Blob* pVertexShaderBlob = nullptr;
 	ID3D10Blob* pPixelShaderBlob = nullptr;
+
+	ID3D11VertexShader *pCubeVertexShader = nullptr;
+	ID3D11PixelShader *pCubePixelShader = nullptr;
+	ID3D11InputLayout *pCubeInputLayout = nullptr;
 
 	hr = D3DX11CompileFromFile("./cubeVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
@@ -285,13 +288,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
-	hr = pDevice->CreateVertexShader(pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), nullptr, &pVertexShader);
+	hr = pDevice->CreateVertexShader(pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), nullptr, &pCubeVertexShader);
 	if (FAILED(hr)) {
 		MessageBox(NULL, "ERROR::CreateVertexShader", "Error", MB_OK);
 		return hr;
 	}
 
-	hr = pDevice->CreatePixelShader(pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), nullptr, &pPixelShader);
+	hr = pDevice->CreatePixelShader(pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), nullptr, &pCubePixelShader);
 	if (FAILED(hr)) {
 		MessageBox(NULL, "ERROR::CreatePixelShader", "Error", MB_OK);
 		return hr;
@@ -320,42 +323,87 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
-	hr = D3DX11CreateShaderResourceViewFromFile(pDevice, "./triangle.jpg", nullptr, nullptr, &pShaderResourceView, nullptr);
+	hr = D3DX11CreateShaderResourceViewFromFile(pDevice, "./texture.jpg", nullptr, nullptr, &pShaderResourceView, nullptr);
 	if (FAILED(hr)) {
 		MessageBox(nullptr, "ERROR::CreateShaderResourceView", "Error", MB_OK);
 		return hr;
 	}
-
-	pImmediateContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-	pImmediateContext->PSSetSamplers(0, 1, &pSamplerState);
-
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
+	
+	D3D11_INPUT_ELEMENT_DESC cubeLayout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	const UINT numElements = ARRAYSIZE(layout);
-	hr = pDevice->CreateInputLayout(layout, numElements, pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pInputLayout);
+	hr = pDevice->CreateInputLayout(cubeLayout, ARRAYSIZE(cubeLayout), pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pCubeInputLayout);
 	if (FAILED(hr)) {
 		MessageBox(NULL, "ERROR::CreateInputLayout", "Error", MB_OK);
 		return hr;
 	}
-	pImmediateContext->IASetInputLayout(pInputLayout);
+
+	ID3D11VertexShader *pLightVertexShader = nullptr;
+	ID3D11PixelShader *pLightPixelShader = nullptr;
+	ID3D11InputLayout *pLightInputLayout = nullptr;
+
+	hr = D3DX11CompileFromFile("./lightVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
+	if (FAILED(hr)) {
+		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
+		else MessageBox(NULL, "light.vs File Not Found", "Error", MB_OK);
+		return hr;
+	}
+	hr = D3DX11CompileFromFile("./lightPixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
+	if (FAILED(hr)) {
+		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
+		else MessageBox(NULL, "light.vs File Not Found", "Error", MB_OK);
+		return hr;
+	}
+
+	hr = pDevice->CreateVertexShader(pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), nullptr, &pLightVertexShader);
+	if (FAILED(hr)) {
+		MessageBox(NULL, "ERROR::CreateVertexShader", "Error", MB_OK);
+		return hr;
+	}
+
+	hr = pDevice->CreatePixelShader(pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), nullptr, &pLightPixelShader);
+	if (FAILED(hr)) {
+		MessageBox(NULL, "ERROR::CreatePixelShader", "Error", MB_OK);
+		return hr;
+	}
+
+	D3D11_INPUT_ELEMENT_DESC lightLayout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 } 
+	};
+	hr = pDevice->CreateInputLayout(lightLayout, ARRAYSIZE(lightLayout), pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pLightInputLayout);
+	if (FAILED(hr)) {
+		MessageBox(NULL, "ERROR::CreateInputLayout", "Error", MB_OK);
+		return hr;
+	}
 
 	////////////////////////////////////////////////////////////////////// MSG ///////////////////////////////////////////////////////////
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 	while (msg.message != WM_QUIT) {
 		float color[] = { 0.1f , 0.2f , 0.3f , 1.0f };
+		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 
-		cb.world = cb.world * XMMatrixRotationY(0.0001f);
-
+		cubeWorld = cubeWorld * XMMatrixRotationX(0.0001f) * XMMatrixRotationY(0.0001f) * XMMatrixRotationZ(0.0001f);
+		cb.world = XMMatrixTranspose(cubeWorld);
 		pImmediateContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
 		pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
-		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
-		pImmediateContext->VSSetShader(pVertexShader, nullptr, 0);
-		pImmediateContext->PSSetShader(pPixelShader, nullptr, 0);
+		pImmediateContext->PSSetShaderResources(0, 1, &pShaderResourceView);
+		pImmediateContext->PSSetSamplers(0, 1, &pSamplerState);
+		pImmediateContext->IASetInputLayout(pCubeInputLayout);
+		pImmediateContext->VSSetShader(pCubeVertexShader, nullptr, 0);
+		pImmediateContext->PSSetShader(pCubePixelShader, nullptr, 0);
 		pImmediateContext->DrawIndexed(36, 0, 0);
+
+		cb.world = XMMatrixTranspose(lightWorld * XMMatrixTranslation(0.0f, 3.0f, 0.0f));
+		pImmediateContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
+		pImmediateContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+		pImmediateContext->IASetInputLayout(pLightInputLayout);
+		pImmediateContext->VSSetShader(pLightVertexShader, nullptr, 0);
+		pImmediateContext->PSSetShader(pLightPixelShader, nullptr, 0);
+		pImmediateContext->DrawIndexed(36, 0, 0);
+
 		pSwapChain->Present(0, 0);
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -363,6 +411,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
+	pLightPixelShader->Release();
+	pLightVertexShader->Release();
 	pSamplerState->Release();
 	pShaderResourceView->Release();
 	pConstantBuffer->Release();
@@ -372,11 +422,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pDevice->Release();
 	pTexture2D->Release();
 	pVertexBufferObject->Release();
-	pVertexShader->Release();
-	pPixelShader->Release();
+	pCubeVertexShader->Release();
+	pCubePixelShader->Release();
 	pVertexShaderBlob->Release();
 	pPixelShaderBlob->Release();
-	pInputLayout->Release();
+	pCubeInputLayout->Release();
 	if (pErrorMessage) {
 		pErrorMessage->Release();
 	}
