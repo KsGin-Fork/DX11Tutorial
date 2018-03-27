@@ -1,4 +1,5 @@
-﻿  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\trianglePixelShader.cso
+﻿  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\cubePixelShader.cso
+  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\cubeVertexShader.cso
   main.cpp
 c:\program files (x86)\microsoft directx sdk (february 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': macro redefinition
   c:\program files (x86)\windows kits\10\include\10.0.16299.0\shared\winerror.h(53655): note: see previous definition of 'DXGI_STATUS_OCCLUDED'

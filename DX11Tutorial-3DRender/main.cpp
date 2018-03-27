@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(nullptr, "ERROR::RegisterClass_Error", "Error", MB_OK);
 		return -1;
 	}
-	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-TextureTriangle", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-3DRender", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) {
 		MessageBox(nullptr, "ERROR::CreateWindow_Error", "Error", MB_OK);
 		return -1;
@@ -250,13 +250,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ID3D10Blob* pVertexShaderBlob = nullptr;
 	ID3D10Blob* pPixelShaderBlob = nullptr;
 
-	hr = D3DX11CompileFromFile("./triangleVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile("./cubeVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
 		else MessageBox(NULL, "Triangle.vs File Not Found", "Error", MB_OK);
 		return hr;
 	}
-	hr = D3DX11CompileFromFile("./trianglePixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile("./cubePixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
 		else MessageBox(NULL, "Triangle.vs File Not Found", "Error", MB_OK);

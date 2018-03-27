@@ -56,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(nullptr, "ERROR::RegisterClass_Error", "Error", MB_OK);
 		return -1;
 	}
-	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-TextureTriangle", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-DiffuseLighting", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) {
 		MessageBox(nullptr, "ERROR::CreateWindow_Error", "Error", MB_OK);
 		return -1;
