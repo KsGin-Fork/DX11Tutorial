@@ -12,6 +12,7 @@ struct vertexInputType {
 
 struct pixelInputType {
 	float4 pos : SV_POSITION;
+	float4 posw : POSITION1;
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL;
 };
@@ -23,6 +24,7 @@ pixelInputType main( vertexInputType input ){
 	output.pos = mul(output.pos , view);
 	output.pos = mul(output.pos , projection);
 	output.texcoord = input.texcoord;
-	output.normal = mul(input.normal , (float3x3)world);
+	output.normal = mul(input.normal , world);
+	output.posw = mul(input.pos , world);
 	return output;
 }
