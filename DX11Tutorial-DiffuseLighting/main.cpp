@@ -272,16 +272,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ID3D10Blob* pVertexShaderBlob = nullptr;
 	ID3D10Blob* pPixelShaderBlob = nullptr;
 
-	hr = D3DX11CompileFromFile("./triangleVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile("./cubeVertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
-		else MessageBox(NULL, "Triangle.vs File Not Found", "Error", MB_OK);
+		else MessageBox(NULL, "cube.vs File Not Found", "Error", MB_OK);
 		return hr;
 	}
-	hr = D3DX11CompileFromFile("./trianglePixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile("./cubePixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
-		else MessageBox(NULL, "Triangle.vs File Not Found", "Error", MB_OK);
+		else MessageBox(NULL, "cube.vs File Not Found", "Error", MB_OK);
 		return hr;
 	}
 
