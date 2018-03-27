@@ -1,5 +1,2 @@
-﻿D:\VisualStudioWorkSpace\DX11Tutorial\DX11Tutorial-DiffuseLighting\cubeVertexShader.hlsl(27,18-42): warning X3206: 'mul': implicit truncation of vector type
-D:\VisualStudioWorkSpace\DX11Tutorial\DX11Tutorial-DiffuseLighting\cubeVertexShader.hlsl(27,2-42): warning X3206: implicit truncation of vector type
-  
-  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\cubeVertexShader.cso
+﻿  compilation object save succeeded; see D:\VisualStudioWorkSpace\DX11Tutorial\Debug\cubePixelShader.cso
   DX11Tutorial-DiffuseLighting.vcxproj -> D:\VisualStudioWorkSpace\DX11Tutorial\Debug\DX11Tutorial-DiffuseLighting.exe
