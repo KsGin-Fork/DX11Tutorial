@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DiffuseLightin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-UsingAssimp", "DX11Tutorial-UsingAssimp\DX11Tutorial-UsingAssimp.vcxproj", "{E838B137-D3B4-45E4-8A91-160C83E7D787}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-RenderMesh", "DX11Tutorial-RenderMesh\DX11Tutorial-RenderMesh.vcxproj", "{BCDD3FEC-711D-459C-BCF6-C23230F446A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{E838B137-D3B4-45E4-8A91-160C83E7D787}.Release|x64.Build.0 = Release|x64
 		{E838B137-D3B4-45E4-8A91-160C83E7D787}.Release|x86.ActiveCfg = Release|Win32
 		{E838B137-D3B4-45E4-8A91-160C83E7D787}.Release|x86.Build.0 = Release|Win32
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Debug|x64.ActiveCfg = Debug|x64
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Debug|x64.Build.0 = Debug|x64
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Debug|x86.ActiveCfg = Debug|Win32
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Debug|x86.Build.0 = Debug|Win32
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Release|x64.ActiveCfg = Release|x64
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Release|x64.Build.0 = Release|x64
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Release|x86.ActiveCfg = Release|Win32
+		{BCDD3FEC-711D-459C-BCF6-C23230F446A5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

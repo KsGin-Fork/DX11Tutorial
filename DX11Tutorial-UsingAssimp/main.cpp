@@ -64,7 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(nullptr, "ERROR::RegisterClass_Error", "Error", MB_OK);
 		return -1;
 	}
-	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-DiffuseLighting", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+	const auto hWnd = CreateWindow("mWndClass", "DX11Tutorial-Using Assimp", WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) {
 		MessageBox(nullptr, "ERROR::CreateWindow_Error", "Error", MB_OK);
 		return -1;
@@ -143,7 +143,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//////////////////////////////////////////////////////////////////////// Vertex ///////////////////////////////////////////////////////////////////////
 	Importer imp;
-	const aiScene *scene = imp.ReadFile("./Resources/Male.obj", 
+	const aiScene *scene = imp.ReadFile("./Resources/House.3DS", 
 		aiProcess_GenNormals | aiProcess_Triangulate | 
 		aiProcess_FixInfacingNormals | aiProcess_FlipWindingOrder | 
 		aiProcess_GenUVCoords | aiProcess_FlipUVs);
@@ -171,8 +171,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			} else {
 				vertices[idx1].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);
 			}
-			if (mesh->HasTextureCoords(j)) {
-				vertices[idx1].texcoord = XMFLOAT2(mesh->mTextureCoords[j]->x, mesh->mTextureCoords[j]->y);
+			if (mesh->HasTextureCoords(0)) {
+				vertices[idx1].texcoord = XMFLOAT2(mesh->mTextureCoords[0][j].x, mesh->mTextureCoords[0][j].y);
 			} else {
 				vertices[idx1].texcoord = XMFLOAT2(0.0f, 0.0f);
 			}
@@ -241,7 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Constant cb = {
 		XMMatrixIdentity(),
 		XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 3.0f, -10.0f, 0.0f),
+			XMVectorSet(0.0f, 50.0f, -200.0f, 0.0f),
 			XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 		),
@@ -346,7 +346,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (msg.message != WM_QUIT) {
 		float color[] = { 0.1f , 0.2f , 0.3f , 1.0f };
 
-		cb.world = cb.world * XMMatrixTranspose(XMMatrixRotationY(0.001f));
+		cb.world = cb.world * XMMatrixTranspose(XMMatrixRotationY(0.0001f));
 		
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
 		pImmediateContext->UpdateSubresource(pConstantBuffer, 0, nullptr, &cb, 0, 0);
