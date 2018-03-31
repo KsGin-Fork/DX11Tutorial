@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-2DRender", "DX11Tutorial-2DRender\DX11Tutorial-2DRender.vcxproj", "{C835E84E-E830-431D-B9C6-F0F84C5F03CC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Font", "DX11Tutorial-Font\DX11Tutorial-Font.vcxproj", "{8CDE753B-2AE7-45D5-A513-34328AA219AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -106,6 +108,14 @@ Global
 		{C835E84E-E830-431D-B9C6-F0F84C5F03CC}.Release|x64.Build.0 = Release|x64
 		{C835E84E-E830-431D-B9C6-F0F84C5F03CC}.Release|x86.ActiveCfg = Release|Win32
 		{C835E84E-E830-431D-B9C6-F0F84C5F03CC}.Release|x86.Build.0 = Release|Win32
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Debug|x64.ActiveCfg = Debug|x64
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Debug|x64.Build.0 = Debug|x64
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Debug|x86.ActiveCfg = Debug|Win32
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Debug|x86.Build.0 = Debug|Win32
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Release|x64.ActiveCfg = Release|x64
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Release|x64.Build.0 = Release|x64
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Release|x86.ActiveCfg = Release|Win32
+		{8CDE753B-2AE7-45D5-A513-34328AA219AF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
