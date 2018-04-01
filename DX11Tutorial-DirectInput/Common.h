@@ -1,8 +1,14 @@
 #pragma once
 
 #include <D3D11.h>
+#include <D3DX11tex.h>
+#include <D3Dcompiler.h>
+#include <DirectXMath.h>
+#include <fstream>
+#include <string>
+#include <dinput.h>
 
-#define DIRECTINPUT_VERSION 0x0800	// dxinput °æ±¾
+#define DIRECTINPUT8_VERSION 0x0800	// dxinput °æ±¾
 
 const int width = 1920, height = 1080;
 
@@ -31,15 +37,6 @@ inline HRESULT CALLBACK WndProc(
 	const UINT uMsg, 
 	const WPARAM wParam, 
 	const LPARAM lParam) {
-	switch (uMsg) {
-	case WM_DESTROY: PostQuitMessage(0); break;
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE) {
-			DestroyWindow(hWnd);
-		}
-		break;
-	default: break;
-	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
@@ -139,6 +136,7 @@ inline HRESULT SetDepth(
 inline HRESULT InitWindowAndD3D(
 	const HINSTANCE hInstance,
 	const char * windowName,
+	HWND * hWnd,
 	IDXGISwapChain **pSwapChain,
 	ID3D11RenderTargetView **pRenderTargetView,
 	ID3D11Device **pDevice,
@@ -160,14 +158,14 @@ inline HRESULT InitWindowAndD3D(
 		MessageBox(nullptr, "ERROR::RegisterClass_Error", "Error", MB_OK);
 		return -1;
 	}
-	const auto hWnd = CreateWindow("mWndClass", windowName , WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+	(*hWnd) = CreateWindow("mWndClass", windowName , WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) {
 		MessageBox(nullptr, "ERROR::CreateWindow_Error", "Error", MB_OK);
 		return -1;
 	}
 
-	ShowWindow(hWnd, SW_NORMAL);
-	UpdateWindow(hWnd);
+	ShowWindow(*hWnd, SW_NORMAL);
+	UpdateWindow(*hWnd);
 
 	DXGI_SWAP_CHAIN_DESC dc;
 	ZeroMemory(&dc, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -180,7 +178,7 @@ inline HRESULT InitWindowAndD3D(
 	dc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	dc.SampleDesc.Count = 1;
 	dc.SampleDesc.Quality = 0;
-	dc.OutputWindow = hWnd;
+	dc.OutputWindow = *hWnd;
 	dc.Windowed = true;
 
 	UINT createDeviceFlags = 0;
@@ -430,5 +428,85 @@ inline HRESULT InitShader(
 	
 	if (pErrorMessage) {
 		pErrorMessage->Release();
+	}
+}
+
+
+inline HRESULT PrintMousePos(
+	const int mouseX ,
+	const int mouseY , 
+	Font *fonts,
+	ID3D11VertexShader *pVertexShader , 
+	ID3D11PixelShader *pPixelShader , 
+	ID3D11InputLayout *pInputLayout,
+	ID3D11Device *pDevice , 
+	ID3D11DeviceContext **pImmediateContext) {
+
+	string xyStr = "Mouse X = " + to_string(mouseX) + " Y = " + to_string(mouseY);
+	Vertex *vertices = nullptr;
+	int nNumVertices = 0;
+
+	InitVertex(pDevice , xyStr.c_str() , -800 , 400 , fonts , pImmediateContext , &nNumVertices , &vertices);
+	(*pImmediateContext)->VSSetShader(pVertexShader, 0, 0);
+	(*pImmediateContext)->PSSetShader(pPixelShader, 0, 0);
+	(*pImmediateContext)->IASetInputLayout(pInputLayout);
+	(*pImmediateContext)->Draw(nNumVertices * 6, 0);
+
+	return S_OK;
+}
+
+inline HRESULT InitInputDevice(
+	const HINSTANCE hInstance ,
+	const HWND hWnd ,
+	IDirectInputDevice8 **pKeyboard , 
+	IDirectInputDevice8 **pMouse) {
+	HRESULT hr;
+	IDirectInput8 *pInputDevice = nullptr;
+	hr = DirectInput8Create(hInstance, DIRECTINPUT8_VERSION, IID_IDirectInput8, reinterpret_cast<LPVOID*>(&pInputDevice), nullptr);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateInputDevice", "ERROR", MB_OK);
+		return hr;
+	}
+
+	hr = pInputDevice->CreateDevice(GUID_SysKeyboard, pKeyboard, nullptr);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateKeyBoard", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pKeyboard)->SetDataFormat(&c_dfDIKeyboard);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::SetKeyBoardDataFormat", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pKeyboard)->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::SetKeyBoardCooperativeLevel", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pKeyboard)->Acquire();
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::KeyBoardAcquire", "ERROR", MB_OK);
+		return hr;
+	}
+
+	hr = pInputDevice->CreateDevice(GUID_SysMouse, pMouse, nullptr);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::CreateMouse", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pMouse)->SetDataFormat(&c_dfDIMouse);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::SetMouseDataFormat", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pMouse)->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::SetMouseCooperativeLevel", "ERROR", MB_OK);
+		return hr;
+	}
+	hr = (*pMouse)->Acquire();
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "ERROR::MouseAcquire", "ERROR", MB_OK);
+		return hr;
 	}
 }
