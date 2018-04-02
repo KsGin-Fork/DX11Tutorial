@@ -1,15 +1,14 @@
 
 #include "Common.h"
-
-
 #include <D3D11.h>
 #include <minwinbase.h>
 #include <Windows.h>
 #include <D3DX10math.h>
 #include <DirectXMath.h>
-#include <dinput.h>
-#include <iostream>
+#include <Pdh.h>
 
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "pdh.lib")
 
 ////////////////////////////////////////////////////////////////////////////// Input ///////////////////////////////////////////////////////////////////////
 #define DIRECTINPUT8_VERSION 0x0800
@@ -31,7 +30,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ID3D11PixelShader *pPixelShader = nullptr;
 	ID3D11InputLayout *pInputLayout = nullptr;
 	HRESULT hr;
-	int nNumVertex = 0;
 
 	hr = InitWindowAndD3D(hInstance, "DirectInput", &hWnd, &pSwapChain, &pRenderTargetView, &pDevice, &pImmediateContext);
 	if (FAILED(hr)) {
@@ -55,13 +53,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
-	IDirectInputDevice8 *pKeyboard = nullptr;
-	IDirectInputDevice8 *pMouse = nullptr;
-	InitInputDevice(hInstance, hWnd, &pKeyboard, &pMouse);
+	const string fpsText = "FPS : ";
+	int tCount = 0;
+	int fps = 0;
+	unsigned long startTime = timeGetTime();
 
-	char pKeyBoardState[256];
-	DIMOUSESTATE mouseState;
-	int mouseX = 0, mouseY = 0;	
+	const string cpuText = "CUP : ";
+	unsigned long lastSampleTime = timeGetTime();
+	int cpuUsage = 0;
+	bool canSample = true;
+	HQUERY hQuery = nullptr;
+	HCOUNTER hCounter = nullptr;
+	PDH_STATUS status;
+
+	status = PdhOpenQuery(nullptr, 0, &hQuery);
+	if (status != ERROR_SUCCESS) {
+		MessageBox(nullptr, "ERROR::OpenQuery", "ERROR", MB_OK);
+		canSample = false;
+	}
+	status = PdhAddCounter(hQuery, TEXT("\\Processor(_Total)\\% processor time"), 0, &hCounter);
+	if (status != ERROR_SUCCESS) {
+		MessageBox(nullptr, "ERROR::AddCounter", "ERROR", MB_OK);
+		canSample = false;
+	}
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -71,39 +85,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 		}
 
-		hr = pKeyboard->GetDeviceState(sizeof(pKeyBoardState), static_cast<LPVOID>(&pKeyBoardState));
-		if (FAILED(hr)) {
-			if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
-				pKeyboard->Acquire();
-			}
-			else {
-				MessageBox(nullptr, "ERROR::GetKeyBoardState", "ERROR", MB_OK);
-				return hr;
-			}
-		}
-
-		hr = pMouse->GetDeviceState(sizeof(DIMOUSESTATE), static_cast<LPVOID>(&mouseState));
-		if (FAILED(hr)) {
-			if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
-				pMouse->Acquire();
-			}
-			else {
-				MessageBox(nullptr, "ERROR::GetMouseState", "ERROR", MB_OK);
-				return hr;
-			}
-		}
-
-		if (pKeyBoardState[DIK_ESCAPE] & 0x80) {
-			PostQuitMessage(0);
-		}
-
-		mouseX += mouseState.lX;
-		mouseY += mouseState.lY;
-		
-
 		float color[] = { 0.0f , 0.0f , 0.0f , 1.0f };
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
-		PrintText(mouseX , mouseY , fonts , pVertexShader , pPixelShader , pInputLayout , pDevice , &pImmediateContext);
+		PrintText(fpsText + to_string(GetFPS(startTime , fps , tCount)) , -620, 300, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
+		PrintText(cpuText + to_string(GetCPUUsage(canSample , cpuUsage , lastSampleTime , hQuery , hCounter)) , -620, 240, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
 		pSwapChain->Present(0, 0);
 	}
 
@@ -118,13 +103,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	delete[] vertices;
 	fonts = 0;
 	vertices = 0;
-
-	pMouse->Unacquire();
-	pMouse->Release();
-	pMouse = 0;
-	pKeyboard->Unacquire();
-	pKeyboard->Release();
-	pKeyboard = 0;
+	PdhCloseQuery(hQuery);
 
 	return 0;
 }

@@ -6,7 +6,7 @@
 #include <DirectXMath.h>
 #include <fstream>
 #include <string>
-#include <dinput.h>
+#include <Pdh.h>
 
 #define DIRECTINPUT8_VERSION 0x0800	// dxinput °æ±¾
 
@@ -261,6 +261,11 @@ inline HRESULT InitVertex(
 	int* nNumVertex,
 	Vertex **vertices) {
 
+	if (*vertices) {
+		delete[] *vertices;
+		*vertices = nullptr;
+	}
+
 	*nNumVertex = strlen(sentence);
 	*vertices = new Vertex[*nNumVertex * 6];
 
@@ -433,20 +438,19 @@ inline HRESULT InitShader(
 
 
 inline HRESULT PrintText(
-	const int mouseX ,
-	const int mouseY , 
+	const string& text,
+	const int drawX, 
+	const int drawY,
 	Font *fonts,
 	ID3D11VertexShader *pVertexShader , 
 	ID3D11PixelShader *pPixelShader , 
 	ID3D11InputLayout *pInputLayout,
 	ID3D11Device *pDevice , 
+	Vertex **vertices,
 	ID3D11DeviceContext **pImmediateContext) {
 
-	string xyStr = "Mouse X = " + to_string(mouseX) + " Y = " + to_string(mouseY);
-	Vertex *vertices = nullptr;
 	int nNumVertices = 0;
-
-	InitVertex(pDevice , xyStr.c_str() , -800 , 400 , fonts , pImmediateContext , &nNumVertices , &vertices);
+	InitVertex(pDevice , text.c_str() , drawX , drawY , fonts , pImmediateContext , &nNumVertices , vertices);
 	(*pImmediateContext)->VSSetShader(pVertexShader, 0, 0);
 	(*pImmediateContext)->PSSetShader(pPixelShader, 0, 0);
 	(*pImmediateContext)->IASetInputLayout(pInputLayout);
@@ -455,58 +459,26 @@ inline HRESULT PrintText(
 	return S_OK;
 }
 
-inline HRESULT InitInputDevice(
-	const HINSTANCE hInstance ,
-	const HWND hWnd ,
-	IDirectInputDevice8 **pKeyboard , 
-	IDirectInputDevice8 **pMouse) {
-	HRESULT hr;
-	IDirectInput8 *pInputDevice = nullptr;
-	hr = DirectInput8Create(hInstance, DIRECTINPUT8_VERSION, IID_IDirectInput8, reinterpret_cast<LPVOID*>(&pInputDevice), nullptr);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::CreateInputDevice", "ERROR", MB_OK);
-		return hr;
+inline int GetFPS(unsigned long &startTime , int &fps , int &tc) {
+	const auto time = timeGetTime();
+	if (time >= (startTime + 1000)) {
+		fps = tc;
+		tc = 0;
+		startTime = timeGetTime();
+	} else {
+		++tc;
 	}
+	return fps;
+}
 
-	hr = pInputDevice->CreateDevice(GUID_SysKeyboard, pKeyboard, nullptr);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::CreateKeyBoard", "ERROR", MB_OK);
-		return hr;
+inline int GetCPUUsage(const bool canSamleUsage , int &usage, unsigned long &lastTime , const HQUERY hQuery , const HCOUNTER hCounter) {
+	const auto time = timeGetTime();
+	if (canSamleUsage && time >= (lastTime + 1000)) {
+		PDH_FMT_COUNTERVALUE value;
+		PdhCollectQueryData(hQuery);
+		PdhGetFormattedCounterValue(hCounter, PDH_FMT_LONG, nullptr, &value);
+		usage = value.longValue;
+		lastTime = timeGetTime();
 	}
-	hr = (*pKeyboard)->SetDataFormat(&c_dfDIKeyboard);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::SetKeyBoardDataFormat", "ERROR", MB_OK);
-		return hr;
-	}
-	hr = (*pKeyboard)->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::SetKeyBoardCooperativeLevel", "ERROR", MB_OK);
-		return hr;
-	}
-	hr = (*pKeyboard)->Acquire();
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::KeyBoardAcquire", "ERROR", MB_OK);
-		return hr;
-	}
-
-	hr = pInputDevice->CreateDevice(GUID_SysMouse, pMouse, nullptr);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::CreateMouse", "ERROR", MB_OK);
-		return hr;
-	}
-	hr = (*pMouse)->SetDataFormat(&c_dfDIMouse);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::SetMouseDataFormat", "ERROR", MB_OK);
-		return hr;
-	}
-	hr = (*pMouse)->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::SetMouseCooperativeLevel", "ERROR", MB_OK);
-		return hr;
-	}
-	hr = (*pMouse)->Acquire();
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "ERROR::MouseAcquire", "ERROR", MB_OK);
-		return hr;
-	}
+	return usage;
 }

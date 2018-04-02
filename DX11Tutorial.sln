@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Font", "DX11Tu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DirectInput", "DX11Tutorial-DirectInput\DX11Tutorial-DirectInput.vcxproj", "{FDB5EE20-5779-4D1B-B2C8-4314F61283AC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-FpsAndCpuUsage", "DX11Tutorial-FpsAndCpuUsage\DX11Tutorial-FpsAndCpuUsage.vcxproj", "{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -126,6 +128,14 @@ Global
 		{FDB5EE20-5779-4D1B-B2C8-4314F61283AC}.Release|x64.Build.0 = Release|x64
 		{FDB5EE20-5779-4D1B-B2C8-4314F61283AC}.Release|x86.ActiveCfg = Release|Win32
 		{FDB5EE20-5779-4D1B-B2C8-4314F61283AC}.Release|x86.Build.0 = Release|Win32
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Debug|x64.ActiveCfg = Debug|x64
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Debug|x64.Build.0 = Debug|x64
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Debug|x86.ActiveCfg = Debug|Win32
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Debug|x86.Build.0 = Debug|Win32
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Release|x64.ActiveCfg = Release|x64
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Release|x64.Build.0 = Release|x64
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Release|x86.ActiveCfg = Release|Win32
+		{28FB4A25-1D0F-4CD4-AD08-D8EECCC810E6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
