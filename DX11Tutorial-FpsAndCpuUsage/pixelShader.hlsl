@@ -9,6 +9,7 @@ struct pixelInputType {
 
 float4 main(pixelInputType input) : SV_TARGET{
 	float4 color = tex.Sample(samp, input.texcoord);
-	if (color.x + color.y + color.z > 0.0f) return color;
-	return float4(0.0f, 0.0f, 0.0f, 0.0f);
+	if (color.r + color.g + color.b == 3.0f)
+		return float4(1.0f, 1.0f, 0.0f, 0.0f) ;
+	return color;
 } 

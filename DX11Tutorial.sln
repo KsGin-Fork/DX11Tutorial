@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-FpsAndCpuUsage
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DirectSound", "DX11Tutorial-DirectSound\DX11Tutorial-DirectSound.vcxproj", "{7FC47C2E-1823-4A7E-AD9E-D00A4994340C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-FrustumCulling", "DX11Tutorial-FrustumCulling\DX11Tutorial-FrustumCulling.vcxproj", "{F8BA5B60-9978-4B41-9FB9-99A026500726}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -146,6 +148,14 @@ Global
 		{7FC47C2E-1823-4A7E-AD9E-D00A4994340C}.Release|x64.Build.0 = Release|x64
 		{7FC47C2E-1823-4A7E-AD9E-D00A4994340C}.Release|x86.ActiveCfg = Release|Win32
 		{7FC47C2E-1823-4A7E-AD9E-D00A4994340C}.Release|x86.Build.0 = Release|Win32
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Debug|x64.ActiveCfg = Debug|x64
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Debug|x64.Build.0 = Debug|x64
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Debug|x86.ActiveCfg = Debug|Win32
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Debug|x86.Build.0 = Debug|Win32
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Release|x64.ActiveCfg = Release|x64
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Release|x64.Build.0 = Release|x64
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Release|x86.ActiveCfg = Release|Win32
+		{F8BA5B60-9978-4B41-9FB9-99A026500726}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
