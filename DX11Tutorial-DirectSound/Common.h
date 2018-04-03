@@ -7,6 +7,17 @@
 #include <fstream>
 #include <string>
 #include <Pdh.h>
+#include <minwinbase.h>
+#include <Windows.h>
+#include <D3DX10math.h>
+#include <dsound.h>
+#include <minwinbase.h>
+#include <string.h>
+
+#pragma comment(lib, "dsound.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "pdh.lib")
 
 #define DIRECTINPUT8_VERSION 0x0800	// dxinput 版本
 
@@ -31,18 +42,35 @@ struct Font {
 	int size;
 };
 
+struct WaveHeader
+{
+	char chunkId[4];
+	unsigned long chunkSize;
+	char format[4];
+	char subChunkId[4];
+	unsigned long subChunkSize;
+	unsigned short audioFormat;
+	unsigned short numChannels;
+	unsigned long sampleRate;
+	unsigned long bytesPerSecond;
+	unsigned short blockAlign;
+	unsigned short bitsPerSample;
+	char dataChunkId[4];
+	unsigned long dataSize;
+};
+
 
 inline HRESULT CALLBACK WndProc(
-	const HWND hWnd, 
-	const UINT uMsg, 
-	const WPARAM wParam, 
+	const HWND hWnd,
+	const UINT uMsg,
+	const WPARAM wParam,
 	const LPARAM lParam) {
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 inline HRESULT SetDepth(
-	ID3D11Device* const pDevice , 
-	ID3D11DeviceContext ** pImmediateContext ,
+	ID3D11Device* const pDevice,
+	ID3D11DeviceContext ** pImmediateContext,
 	ID3D11RenderTargetView ** pRenderTargetView) {
 	HRESULT hr;
 	///////////////////////////////////////////////////////////////////// 创建深度纹理贴图 /////////////////////////////////////////////////////////////////
@@ -141,7 +169,7 @@ inline HRESULT InitWindowAndD3D(
 	ID3D11RenderTargetView **pRenderTargetView,
 	ID3D11Device **pDevice,
 	ID3D11DeviceContext **pImmediateContext) {
-	
+
 	WNDCLASS wc;
 	ZeroMemory(&wc, sizeof(WNDCLASS));
 	wc.hInstance = hInstance;
@@ -158,7 +186,7 @@ inline HRESULT InitWindowAndD3D(
 		MessageBox(nullptr, "ERROR::RegisterClass_Error", "Error", MB_OK);
 		return -1;
 	}
-	(*hWnd) = CreateWindow("mWndClass", windowName , WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+	(*hWnd) = CreateWindow("mWndClass", windowName, WS_EX_TOPMOST | WS_OVERLAPPEDWINDOW, 0, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) {
 		MessageBox(nullptr, "ERROR::CreateWindow_Error", "Error", MB_OK);
 		return -1;
@@ -233,7 +261,7 @@ inline HRESULT InitWindowAndD3D(
 }
 
 inline HRESULT InitLetter(Font **fonts) {
-	
+
 	ifstream ifs("./fontdata.txt");
 	if (!ifs.is_open()) return false;
 	int nNumFonts = 0;
@@ -242,7 +270,7 @@ inline HRESULT InitLetter(Font **fonts) {
 	*fonts = new Font[nNumFonts];
 	if (!(fonts)) return false;
 
-	for (int i = 0 ; i < nNumFonts ; ++i) {
+	for (int i = 0; i < nNumFonts; ++i) {
 		int ascii;
 		char letter;
 		ifs >> ascii >> letter >> (*fonts)[i].left >> (*fonts)[i].right >> (*fonts)[i].size;
@@ -252,17 +280,17 @@ inline HRESULT InitLetter(Font **fonts) {
 }
 
 inline HRESULT InitVertex(
-	ID3D11Device * const pDevice , 
-	const char * sentence , 
-	const float drawX ,
-	const float drawY ,  
+	ID3D11Device * const pDevice,
+	const char * sentence,
+	const float drawX,
+	const float drawY,
 	Font * fonts,
 	ID3D11DeviceContext **pImmediateContext,
 	int* nNumVertex,
 	Vertex **vertices) {
 
 	if (*vertices) {
-		delete[] *vertices;
+		delete[] * vertices;
 		*vertices = nullptr;
 	}
 
@@ -272,23 +300,24 @@ inline HRESULT InitVertex(
 	int idx = 0;
 	float posX = drawX;
 	const float posY = drawY;
-	for (auto i = 0 ; i < *nNumVertex; ++i) {
+	for (auto i = 0; i < *nNumVertex; ++i) {
 		const Font letter = fonts[static_cast<int>(sentence[i]) - 32];
 		if (sentence[i] - 32 == 0) {
 			posX += 3;
-		} else {
+		}
+		else {
 			(*vertices)[idx].pos = XMFLOAT3(posX, posY, 0.0f);	// 左上
 			(*vertices)[idx++].tex = XMFLOAT2(letter.left, 0.0f);
 			(*vertices)[idx].pos = XMFLOAT3(posX + letter.size, posY - 16, 0.0f);	// 右下
-			(*vertices)[idx++].tex = XMFLOAT2(letter.right, 1.0f); 
+			(*vertices)[idx++].tex = XMFLOAT2(letter.right, 1.0f);
 			(*vertices)[idx].pos = XMFLOAT3(posX, posY - 16, 0.0f);	// 左下
-			(*vertices)[idx++].tex = XMFLOAT2(letter.left, 1.0f); 
+			(*vertices)[idx++].tex = XMFLOAT2(letter.left, 1.0f);
 			(*vertices)[idx].pos = XMFLOAT3(posX, posY, 0.0f);	// 左上
 			(*vertices)[idx++].tex = XMFLOAT2(letter.left, 0.0f);
 			(*vertices)[idx].pos = XMFLOAT3(posX + letter.size, posY, 0.0f);	// 右上
 			(*vertices)[idx++].tex = XMFLOAT2(letter.right, 0.0f);
 			(*vertices)[idx].pos = XMFLOAT3(posX + letter.size, posY - 16, 0.0f);	// 右下
-			(*vertices)[idx++].tex = XMFLOAT2(letter.right, 1.0f); 
+			(*vertices)[idx++].tex = XMFLOAT2(letter.right, 1.0f);
 			posX += letter.size + 1.0f;
 		}
 	}
@@ -316,17 +345,17 @@ inline HRESULT InitVertex(
 }
 
 inline HRESULT InitConstant(
-	ID3D11Device *pDevice , 
+	ID3D11Device *pDevice,
 	ID3D11DeviceContext **pImmediateContext) {
 	HRESULT hr;
-		MatrixXD matrix2d = {
-		XMMatrixIdentity() ,
-		XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 0.0f , -100.0f , 0.0f),
-			XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
-			XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
-		),
-		XMMatrixOrthographicLH(static_cast<float>(width) , static_cast<float>(height) , 0.01f , 100.0f)
+	MatrixXD matrix2d = {
+	XMMatrixIdentity() ,
+	XMMatrixLookAtLH(
+		XMVectorSet(0.0f, 0.0f , -100.0f , 0.0f),
+		XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
+		XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
+	),
+	XMMatrixOrthographicLH(static_cast<float>(width) , static_cast<float>(height) , 0.01f , 100.0f)
 	};
 	D3D11_BUFFER_DESC dbDesc2D;
 	ZeroMemory(&dbDesc2D, sizeof(dbDesc2D));
@@ -336,7 +365,7 @@ inline HRESULT InitConstant(
 	D3D11_SUBRESOURCE_DATA dsData2D;
 	ZeroMemory(&dsData2D, sizeof(dsData2D));
 	dsData2D.pSysMem = &matrix2d;
-	
+
 	ID3D11Buffer *pMatrixDBuffer2D = nullptr;
 	hr = pDevice->CreateBuffer(&dbDesc2D, &dsData2D, &pMatrixDBuffer2D);
 	if (FAILED(hr)) {
@@ -347,14 +376,14 @@ inline HRESULT InitConstant(
 }
 
 inline HRESULT InitShader(
-	ID3D11Device *pDevice , 
+	ID3D11Device *pDevice,
 	ID3D11DeviceContext **pImmediateContext,
 	ID3D11VertexShader **pVertexShader,
 	ID3D11PixelShader **pPixelShader,
 	ID3D11InputLayout **pInputLayout) {
 
 	HRESULT hr;
-	
+
 	ID3D10Blob* pErrorMessage = nullptr;
 	ID3D10Blob* pVertexShaderBlob = nullptr;
 	ID3D10Blob* pPixelShaderBlob = nullptr;
@@ -426,11 +455,11 @@ inline HRESULT InitShader(
 		MessageBox(NULL, "ERROR::CreateInputLayout", "Error", MB_OK);
 		return hr;
 	}
-	
+
 
 	pVertexShaderBlob->Release();
 	pPixelShaderBlob->Release();
-	
+
 	if (pErrorMessage) {
 		pErrorMessage->Release();
 	}
@@ -439,18 +468,18 @@ inline HRESULT InitShader(
 
 inline HRESULT PrintText(
 	const string& text,
-	const int drawX, 
+	const int drawX,
 	const int drawY,
 	Font *fonts,
-	ID3D11VertexShader *pVertexShader , 
-	ID3D11PixelShader *pPixelShader , 
+	ID3D11VertexShader *pVertexShader,
+	ID3D11PixelShader *pPixelShader,
 	ID3D11InputLayout *pInputLayout,
-	ID3D11Device *pDevice , 
+	ID3D11Device *pDevice,
 	Vertex **vertices,
 	ID3D11DeviceContext **pImmediateContext) {
 
 	int nNumVertices = 0;
-	InitVertex(pDevice , text.c_str() , drawX , drawY , fonts , pImmediateContext , &nNumVertices , vertices);
+	InitVertex(pDevice, text.c_str(), drawX, drawY, fonts, pImmediateContext, &nNumVertices, vertices);
 	(*pImmediateContext)->VSSetShader(pVertexShader, 0, 0);
 	(*pImmediateContext)->PSSetShader(pPixelShader, 0, 0);
 	(*pImmediateContext)->IASetInputLayout(pInputLayout);
@@ -459,19 +488,28 @@ inline HRESULT PrintText(
 	return S_OK;
 }
 
-inline int GetFPS(unsigned long &startTime , int &fps , int &tc) {
+inline int GetFPS(
+	unsigned long &startTime,
+	int &fps,
+	int &tc) {
 	const auto time = timeGetTime();
 	if (time >= (startTime + 1000)) {
 		fps = tc;
 		tc = 0;
 		startTime = timeGetTime();
-	} else {
+	}
+	else {
 		++tc;
 	}
 	return fps;
 }
 
-inline int GetCPUUsage(const bool canSamleUsage , int &usage, unsigned long &lastTime , const HQUERY hQuery , const HCOUNTER hCounter) {
+inline int GetCPUUsage(
+	const bool canSamleUsage,
+	int &usage,
+	unsigned long &lastTime,
+	const HQUERY hQuery,
+	const HCOUNTER hCounter) {
 	const auto time = timeGetTime();
 	if (canSamleUsage && time >= (lastTime + 1000)) {
 		PDH_FMT_COUNTERVALUE value;
@@ -481,4 +519,21 @@ inline int GetCPUUsage(const bool canSamleUsage , int &usage, unsigned long &las
 		lastTime = timeGetTime();
 	}
 	return usage;
+}
+
+inline void InitQueryAndCounter(
+	HQUERY *hQuery,
+	HCOUNTER *hCounter,
+	bool *canSample) {
+	PDH_STATUS status;
+	status = PdhOpenQuery(nullptr, 0, hQuery);
+	if (status != ERROR_SUCCESS) {
+		MessageBox(nullptr, "ERROR::OpenQuery", "ERROR", MB_OK);
+		*canSample = false;
+	}
+	status = PdhAddCounter(*hQuery, TEXT("\\Processor(_Total)\\% processor time"), 0, hCounter);
+	if (status != ERROR_SUCCESS) {
+		MessageBox(nullptr, "ERROR::AddCounter", "ERROR", MB_OK);
+		canSample = false;
+	}
 }
