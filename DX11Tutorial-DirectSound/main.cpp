@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ID3D11InputLayout *pInputLayout = nullptr;
 	HRESULT hr;
 
-	hr = InitWindowAndD3D(hInstance, "FPS And CPU Usage", &hWnd, &pSwapChain, &pRenderTargetView, &pDevice, &pImmediateContext);
+	hr = InitWindowAndD3D(hInstance, "DirectSound", &hWnd, &pSwapChain, &pRenderTargetView, &pDevice, &pImmediateContext);
 	if (FAILED(hr)) {
 		return hr;
 	}
