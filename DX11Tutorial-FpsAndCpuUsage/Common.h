@@ -40,7 +40,7 @@ inline HRESULT CALLBACK WndProc(
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-inline HRESULT SetDepth(
+inline HRESULT SetDepthStencil(
 	ID3D11Device* const pDevice , 
 	ID3D11DeviceContext ** pImmediateContext ,
 	ID3D11RenderTargetView ** pRenderTargetView) {
@@ -251,7 +251,7 @@ inline HRESULT InitLetter(Font **fonts) {
 	ifs.close();
 }
 
-inline HRESULT InitVertex(
+inline HRESULT InitSentenceVertex(
 	ID3D11Device * const pDevice , 
 	const char * sentence , 
 	const float drawX ,
@@ -315,7 +315,7 @@ inline HRESULT InitVertex(
 	return S_OK;
 }
 
-inline HRESULT InitConstant(
+inline HRESULT Init2DConstant(
 	ID3D11Device *pDevice , 
 	ID3D11DeviceContext **pImmediateContext) {
 	HRESULT hr;
@@ -437,7 +437,7 @@ inline HRESULT InitShader(
 }
 
 
-inline HRESULT PrintText(
+inline HRESULT DrawText(
 	const string& text,
 	const int drawX, 
 	const int drawY,
@@ -450,7 +450,7 @@ inline HRESULT PrintText(
 	ID3D11DeviceContext **pImmediateContext) {
 
 	int nNumVertices = 0;
-	InitVertex(pDevice , text.c_str() , drawX , drawY , fonts , pImmediateContext , &nNumVertices , vertices);
+	InitSentenceVertex(pDevice , text.c_str() , drawX , drawY , fonts , pImmediateContext , &nNumVertices , vertices);
 	(*pImmediateContext)->VSSetShader(pVertexShader, 0, 0);
 	(*pImmediateContext)->PSSetShader(pPixelShader, 0, 0);
 	(*pImmediateContext)->IASetInputLayout(pInputLayout);

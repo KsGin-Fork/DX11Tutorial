@@ -35,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (FAILED(hr)) {
 		return hr;
 	}
-	hr = SetDepth(pDevice, &pImmediateContext, &pRenderTargetView);
+	hr = SetDepthStencil(pDevice, &pImmediateContext, &pRenderTargetView);
 	if (FAILED(hr)) {
 		return hr;
 	}
@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
-	hr = InitConstant(pDevice, &pImmediateContext);
+	hr = Init2DConstant(pDevice, &pImmediateContext);
 	if (FAILED(hr)) {
 		return hr;
 	}
@@ -87,8 +87,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		float color[] = { 0.0f , 0.0f , 0.0f , 1.0f };
 		pImmediateContext->ClearRenderTargetView(pRenderTargetView, color);
-		PrintText(fpsText + to_string(GetFPS(startTime , fps , tCount)) , -620, 300, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
-		PrintText(cpuText + to_string(GetCPUUsage(canSample , cpuUsage , lastSampleTime , hQuery , hCounter)) , -620, 240, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
+		DrawText(fpsText + to_string(GetFPS(startTime , fps , tCount)) , -620, 300, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
+		DrawText(cpuText + to_string(GetCPUUsage(canSample , cpuUsage , lastSampleTime , hQuery , hCounter)) , -620, 240, fonts , pVertexShader, pPixelShader, pInputLayout, pDevice, &vertices, &pImmediateContext);
 		pSwapChain->Present(0, 0);
 	}
 

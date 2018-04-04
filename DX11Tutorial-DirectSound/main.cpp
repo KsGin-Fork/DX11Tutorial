@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (FAILED(hr)) {
 		return hr;
 	}
-	hr = SetDepth(pD3DDevice, &pD3DImmediateContext, &pD3DRenderTargetView);
+	hr = SetDepthStencil(pD3DDevice, &pD3DImmediateContext, &pD3DRenderTargetView);
 	if (FAILED(hr)) {
 		return hr;
 	}
@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return hr;
 	}
 
-	hr = InitConstant(pD3DDevice, &pD3DImmediateContext);
+	hr = Init2DConstant(pD3DDevice, &pD3DImmediateContext);
 	if (FAILED(hr)) {
 		return hr;
 	}
@@ -235,8 +235,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		float color[] = { 0.0f , 0.0f , 0.0f , 1.0f };
 		pD3DImmediateContext->ClearRenderTargetView(pD3DRenderTargetView, color);
-		PrintText(fpsText + to_string(GetFPS(startTime, fps, tCount)), -620, 300, fonts, pVertexShader, pPixelShader, pInputLayout, pD3DDevice, &vertices, &pD3DImmediateContext);
-		PrintText(cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter)), -620, 240, fonts, pVertexShader, pPixelShader, pInputLayout, pD3DDevice, &vertices, &pD3DImmediateContext);
+		DrawText(fpsText + to_string(GetFPS(startTime, fps, tCount)), -620, 300, fonts, pVertexShader, pPixelShader, pInputLayout, pD3DDevice, &vertices, &pD3DImmediateContext);
+		DrawText(cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter)), -620, 240, fonts, pVertexShader, pPixelShader, pInputLayout, pD3DDevice, &vertices, &pD3DImmediateContext);
 		pD3DSwapChain->Present(0, 0);
 	}
 
