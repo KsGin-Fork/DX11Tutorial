@@ -10,10 +10,6 @@
 #include <minwinbase.h>
 #include <Windows.h>
 #include <D3DX10math.h>
-#include <string.h>
-
-#define _CRTDBG_MAP_ALLOC 
-#include <cstdlib>
 
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -28,8 +24,8 @@ using namespace std;
 using namespace DirectX;
 
 struct Vertex {
-	XMFLOAT3 pos;
-	XMFLOAT2 tex;
+	XMFLOAT3 pos{};
+	XMFLOAT2 tex{};
 	Vertex() {}
 	Vertex(XMFLOAT3&& p, XMFLOAT2&& t) {
 		pos = p;
@@ -53,6 +49,15 @@ inline HRESULT CALLBACK WndProc(
 	const UINT uMsg,
 	const WPARAM wParam,
 	const LPARAM lParam) {
+	switch (uMsg) {
+	case WM_DESTROY: PostQuitMessage(0); break;
+	case WM_KEYDOWN:
+		if (wParam == VK_ESCAPE) {
+			DestroyWindow(hWnd);
+		}
+		break;
+	default:break;
+	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
@@ -149,7 +154,7 @@ inline HRESULT SetDepthStencil(
 	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
-	
+
 	hr = pDevice->CreateDepthStencilView(pDepthBuffer, &depthStencilViewDesc, pDepthStencilView);
 	if (FAILED(hr)) {
 		MessageBox(nullptr, "ERROR::CreateDepthStencilView", "ERROR", MB_OK);
@@ -350,24 +355,17 @@ inline HRESULT InitShader(
 }
 
 inline HRESULT Init3DConstant(
+	MatrixXD matrix3d,
 	ID3D11Device *pDevice,
 	ID3D11Buffer **pMatrixDBuffer3D) {
 
 	HRESULT hr;
-	MatrixXD matrix3d = {
-	XMMatrixIdentity() ,
-	XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 3.0f , -3.0f , 0.0f),
-		XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
-		XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
-	),
-	XMMatrixPerspectiveFovLH(90 ,static_cast<float>(width) / static_cast<float>(height) , 0.01f , 100.0f)
-	};
 	D3D11_BUFFER_DESC dbDesc3D;
 	ZeroMemory(&dbDesc3D, sizeof(dbDesc3D));
-	dbDesc3D.Usage = D3D11_USAGE_DEFAULT;
+	dbDesc3D.Usage = D3D11_USAGE_DYNAMIC;
 	dbDesc3D.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	dbDesc3D.ByteWidth = sizeof(matrix3d);
+	dbDesc3D.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	D3D11_SUBRESOURCE_DATA dsData3D;
 	ZeroMemory(&dsData3D, sizeof(dsData3D));
 	dsData3D.pSysMem = &matrix3d;
@@ -547,6 +545,78 @@ inline void InitQueryAndCounter(
 	}
 }
 
+inline HRESULT UpdateSentenceVertexAndIndexBuffer(
+	const char * sentence,
+	const float drawX,
+	const float drawY,
+	Font * fonts,
+	ID3D11Buffer **pVertexBufferObject,
+	ID3D11Buffer **pIndexBufferObject,
+	ID3D11DeviceContext **pImmediateContext,
+	UINT &nNumVertex,
+	Vertex *&vertices,
+	UINT *&indices) {
+	if (vertices) {
+		delete[] vertices;
+		vertices = nullptr;
+	}
+
+	if (indices) {
+		delete[] indices;
+		indices = nullptr;
+	}
+
+	HRESULT hr;
+
+	nNumVertex = strlen(sentence) * 6;
+	vertices = new Vertex[nNumVertex];
+
+	int idx = 0;
+	float posX = drawX;
+	const float posY = drawY;
+	for (auto i = 0; i < nNumVertex / 6; ++i) {
+		const Font letter = fonts[static_cast<int>(sentence[i]) - 32];
+		if (sentence[i] - 32 == 0) {
+			posX += 3;
+		}
+		else {
+			vertices[idx].pos = XMFLOAT3(posX, posY, 0.0f);	// 左上
+			vertices[idx++].tex = XMFLOAT2(letter.left, 0.0f);
+			vertices[idx].pos = XMFLOAT3(posX + letter.size, posY - 16, 0.0f);	// 右下
+			vertices[idx++].tex = XMFLOAT2(letter.right, 1.0f);
+			vertices[idx].pos = XMFLOAT3(posX, posY - 16, 0.0f);	// 左下
+			vertices[idx++].tex = XMFLOAT2(letter.left, 1.0f);
+			vertices[idx].pos = XMFLOAT3(posX, posY, 0.0f);	// 左上
+			vertices[idx++].tex = XMFLOAT2(letter.left, 0.0f);
+			vertices[idx].pos = XMFLOAT3(posX + letter.size, posY, 0.0f);	// 右上
+			vertices[idx++].tex = XMFLOAT2(letter.right, 0.0f);
+			vertices[idx].pos = XMFLOAT3(posX + letter.size, posY - 16, 0.0f);	// 右下
+			vertices[idx++].tex = XMFLOAT2(letter.right, 1.0f);
+			posX += letter.size + 1.0f;
+		}
+	}
+
+	indices = new UINT[nNumVertex];
+	for (auto i = 0; i < nNumVertex; ++i) indices[i] = i;
+
+	D3D11_MAPPED_SUBRESOURCE dms;
+	hr = (*pImmediateContext)->Map(*pVertexBufferObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &dms);
+	if (FAILED(hr)) {
+		return hr;
+	}
+	auto *vertexPtr = static_cast<Vertex*>(dms.pData);
+	memcpy(vertexPtr, vertices, sizeof(Vertex) * nNumVertex);
+	(*pImmediateContext)->Unmap(*pVertexBufferObject, 0);
+	hr = (*pImmediateContext)->Map(*pIndexBufferObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &dms);
+	if (FAILED(hr)) {
+		return hr;
+	}
+	auto *indexPtr = static_cast<UINT*>(dms.pData);
+	memcpy(indexPtr, indices, sizeof(UINT) * nNumVertex);
+	(*pImmediateContext)->Unmap(*pIndexBufferObject, 0);
+
+	return S_OK;
+}
 
 inline HRESULT InitSentenceVertexAndIndexBuffer(
 	const char * sentence,
@@ -572,7 +642,7 @@ inline HRESULT InitSentenceVertexAndIndexBuffer(
 
 	HRESULT hr;
 
-	nNumVertex = strlen(sentence)  * 6;
+	nNumVertex = strlen(sentence) * 6;
 	vertices = new Vertex[nNumVertex];
 
 	int idx = 0;
@@ -602,9 +672,10 @@ inline HRESULT InitSentenceVertexAndIndexBuffer(
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * nNumVertex;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	D3D11_SUBRESOURCE_DATA verticesSourceData;
 	ZeroMemory(&verticesSourceData, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -670,7 +741,7 @@ inline HRESULT Init2DConstant(
 
 
 inline HRESULT DrawModelIndex(
-	const UINT drawIndexCount ,
+	const UINT drawIndexCount,
 	ID3D11Buffer *pVertexBufferObject,
 	ID3D11Buffer *pIndexBufferObject,
 	ID3D11Buffer *pMatrixDBuffer3D,
@@ -688,7 +759,7 @@ inline HRESULT DrawModelIndex(
 	UINT offset = 0;
 
 	(*pImmediateContext)->OMSetDepthStencilState(pDepthStencilState, 1);
-	(*pImmediateContext)->OMSetRenderTargets(1, pRenderTargetView , pDepthStencilView);
+	(*pImmediateContext)->OMSetRenderTargets(1, pRenderTargetView, pDepthStencilView);
 
 	(*pImmediateContext)->IASetVertexBuffers(0, 1, &pVertexBufferObject, &stride, &offset);
 	(*pImmediateContext)->IASetIndexBuffer(pIndexBufferObject, DXGI_FORMAT_R32_UINT, 0);
@@ -701,6 +772,20 @@ inline HRESULT DrawModelIndex(
 	(*pImmediateContext)->IASetInputLayout(pInputLayout);
 	(*pImmediateContext)->PSSetShaderResources(0, 1, &pShaderResourceView);
 	(*pImmediateContext)->PSSetSamplers(0, 1, &pSamplerState);
-	(*pImmediateContext)->DrawIndexed(drawIndexCount , 0, 0);
+	(*pImmediateContext)->DrawIndexed(drawIndexCount, 0, 0);
+	return S_OK;
+}
+
+
+inline HRESULT Update3DModelPos(MatrixXD matrix , ID3D11Buffer *pMatrixDBuffer3D , ID3D11DeviceContext **pImmediateContext) {
+	HRESULT hr;
+	D3D11_MAPPED_SUBRESOURCE dms;
+	hr = (*pImmediateContext)->Map(pMatrixDBuffer3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &dms);
+	if (FAILED(hr)) {
+		return hr;
+	}
+	auto* matrix3D = static_cast<MatrixXD*>(dms.pData);	
+	memcpy(matrix3D, &matrix, sizeof(matrix));
+	(*pImmediateContext)->Unmap(pMatrixDBuffer3D, 0);
 	return S_OK;
 }
