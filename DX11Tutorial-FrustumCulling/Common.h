@@ -692,9 +692,10 @@ inline HRESULT InitSentenceVertexAndIndexBuffer(
 
 	D3D11_BUFFER_DESC indexDesc;
 	ZeroMemory(&indexDesc, sizeof(indexDesc));
-	indexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexDesc.Usage = D3D11_USAGE_DYNAMIC;
 	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexDesc.ByteWidth = sizeof(UINT) * nNumVertex;
+	indexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	D3D11_SUBRESOURCE_DATA indexData;
 	ZeroMemory(&indexData, sizeof(indexData));
@@ -777,7 +778,7 @@ inline HRESULT DrawModelIndex(
 }
 
 
-inline HRESULT Update3DModelPos(MatrixXD matrix , ID3D11Buffer *pMatrixDBuffer3D , ID3D11DeviceContext **pImmediateContext) {
+inline HRESULT Update3DModelWorld(MatrixXD matrix , ID3D11Buffer *pMatrixDBuffer3D , ID3D11DeviceContext **pImmediateContext) {
 	HRESULT hr;
 	D3D11_MAPPED_SUBRESOURCE dms;
 	hr = (*pImmediateContext)->Map(pMatrixDBuffer3D, 0, D3D11_MAP_WRITE_DISCARD, 0, &dms);
@@ -788,4 +789,69 @@ inline HRESULT Update3DModelPos(MatrixXD matrix , ID3D11Buffer *pMatrixDBuffer3D
 	memcpy(matrix3D, &matrix, sizeof(matrix));
 	(*pImmediateContext)->Unmap(pMatrixDBuffer3D, 0);
 	return S_OK;
+}
+
+
+inline HRESULT InitFrustumPlane(const FLOAT depth, const MatrixXD &matrix3D , XMVECTOR *&viewPlane) {
+	const XMMATRIX vip = matrix3D.view * matrix3D.projection;
+	if (viewPlane) {
+		delete[] viewPlane;
+		viewPlane = 0;
+	}
+	viewPlane = new XMVECTOR[6];
+	//near
+	viewPlane[0].m128_f32[0] = vip.r[0].m128_f32[3] + vip.r[0].m128_f32[2];
+	viewPlane[0].m128_f32[1] = vip.r[1].m128_f32[3] + vip.r[1].m128_f32[2];
+	viewPlane[0].m128_f32[2] = vip.r[2].m128_f32[3] + vip.r[2].m128_f32[2];
+	viewPlane[0].m128_f32[3] = vip.r[3].m128_f32[3] + vip.r[3].m128_f32[2];
+	viewPlane[0] = XMPlaneNormalize(viewPlane[0]);
+	//far
+	viewPlane[1].m128_f32[0] = vip.r[0].m128_f32[3] - vip.r[0].m128_f32[2];
+	viewPlane[1].m128_f32[1] = vip.r[1].m128_f32[3] - vip.r[1].m128_f32[2];
+	viewPlane[1].m128_f32[2] = vip.r[2].m128_f32[3] - vip.r[2].m128_f32[2];
+	viewPlane[1].m128_f32[3] = vip.r[3].m128_f32[3] - vip.r[3].m128_f32[2];
+	viewPlane[1] = XMPlaneNormalize(viewPlane[1]);
+	//left
+	viewPlane[2].m128_f32[0] = vip.r[0].m128_f32[3] + vip.r[0].m128_f32[0];
+	viewPlane[2].m128_f32[1] = vip.r[1].m128_f32[3] + vip.r[1].m128_f32[0];
+	viewPlane[2].m128_f32[2] = vip.r[2].m128_f32[3] + vip.r[2].m128_f32[0];
+	viewPlane[2].m128_f32[3] = vip.r[3].m128_f32[3] + vip.r[3].m128_f32[0];
+	viewPlane[2] = XMPlaneNormalize(viewPlane[2]);
+	//right																   
+	viewPlane[3].m128_f32[0] = vip.r[0].m128_f32[3] - vip.r[0].m128_f32[0];
+	viewPlane[3].m128_f32[1] = vip.r[1].m128_f32[3] - vip.r[1].m128_f32[0];
+	viewPlane[3].m128_f32[2] = vip.r[2].m128_f32[3] - vip.r[2].m128_f32[0];
+	viewPlane[3].m128_f32[3] = vip.r[3].m128_f32[3] - vip.r[3].m128_f32[0];
+	viewPlane[3] = XMPlaneNormalize(viewPlane[3]);
+	//top
+	viewPlane[4].m128_f32[0] = vip.r[0].m128_f32[3] - vip.r[0].m128_f32[1];
+	viewPlane[4].m128_f32[1] = vip.r[1].m128_f32[3] - vip.r[1].m128_f32[1];
+	viewPlane[4].m128_f32[2] = vip.r[2].m128_f32[3] - vip.r[2].m128_f32[1];
+	viewPlane[4].m128_f32[3] = vip.r[3].m128_f32[3] - vip.r[3].m128_f32[1];
+	viewPlane[4] = XMPlaneNormalize(viewPlane[4]);
+	//bottom
+	viewPlane[5].m128_f32[0] = vip.r[0].m128_f32[3] + vip.r[0].m128_f32[1];
+	viewPlane[5].m128_f32[1] = vip.r[1].m128_f32[3] + vip.r[1].m128_f32[1];
+	viewPlane[5].m128_f32[2] = vip.r[2].m128_f32[3] + vip.r[2].m128_f32[1];
+	viewPlane[5].m128_f32[3] = vip.r[3].m128_f32[3] + vip.r[3].m128_f32[1];
+	viewPlane[5] = XMPlaneNormalize(viewPlane[5]);
+
+	return S_OK;
+}
+
+
+inline bool CheckCube(XMVECTOR *&viewPlane , const FLOAT centerX , const FLOAT centerY , const FLOAT centerZ , const FLOAT R) {
+	for (int i = 0 ; i < 6 ; ++i) {
+		float dot;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX + R , centerY + R , centerZ + R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX + R , centerY + R , centerZ - R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX + R , centerY - R , centerZ + R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX + R , centerY - R , centerZ - R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX - R , centerY + R , centerZ + R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX - R , centerY + R , centerZ - R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX - R , centerY - R , centerZ + R , 0.0f)));if (dot > 0.0f) continue;
+		XMStoreFloat(&dot,XMPlaneDotCoord(viewPlane[i],XMVectorSet(centerX - R , centerY - R , centerZ - R , 0.0f)));if (dot > 0.0f) continue;
+		return false;
+	}
+	return true;
 }

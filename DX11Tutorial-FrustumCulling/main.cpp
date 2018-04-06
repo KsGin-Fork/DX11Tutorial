@@ -10,15 +10,16 @@ HQUERY hQuery = nullptr;
 HCOUNTER hCounter = nullptr;
 const string fpsText = "FPS : ";
 int tCount = 0;
-int fps = 60;
+int fps = 9999;
 unsigned long startTime = timeGetTime();
-const string cpuText = "  CPU : ";
+const string cpuText = "   CPU : ";
 unsigned long lastSampleTime = timeGetTime();
-int cpuUsage = 50;
+int cpuUsage = 9999;
 const int offsetX = 5;
 const int offsetY = 5;
 float backgroundColor[4] = { 0.0f , 0.0f , 0.0f , 1.0f };
-
+const string cubeText = "   CUBE : ";
+int cube = 9999;
 ////////////////////////////////////////////////////////////////////////////// Main //////////////////////////////////////////////////////////////////////////
 int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow) {
 	srand(timeGetTime());
@@ -59,26 +60,30 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 	ID3D11SamplerState				*pFontSamplerState = nullptr;
 	ID3D11ShaderResourceView		*pFontShaderResourceView = nullptr;
 
-
-	const MatrixXD matrix3d = {
+	const FLOAT snear = 0.01f;
+	const FLOAT sfar = 100.0f;
+	MatrixXD matrix3d = {
 	XMMatrixIdentity() ,
 	XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 3.0f , -100.0f , 0.0f),
+		XMVectorSet(0.0f, 0.0f , -100.0f , 0.0f),
 		XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
 		XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
 	),
-	XMMatrixPerspectiveFovLH(90 ,static_cast<float>(width) / static_cast<float>(height) , 0.01f , 100.0f)
+	XMMatrixPerspectiveFovLH(90 ,static_cast<float>(width) / static_cast<float>(height) , snear , sfar)
 	};
 
-	const UINT nNumList = 5000;
-	auto *matrix3dList = new MatrixXD[nNumList];
-	for (int i = 0 ; i < nNumList ; i++) {
-		matrix3dList[i] = matrix3d;
-		matrix3dList[i].world *= XMMatrixTranslation(
-			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumList / 10, 
-			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumList / 10, 
-			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumList / 10);
-		
+	XMVECTOR *viewPlanes = nullptr;
+	InitFrustumPlane(sfar , matrix3d, viewPlanes);
+
+	const UINT nNumWorldTranslateList = 5000;
+	auto *worldTranslateList = new XMFLOAT3[nNumWorldTranslateList];
+	auto *worldList = new XMMATRIX[nNumWorldTranslateList];
+	for (int i = 0 ; i < nNumWorldTranslateList ; i++) {
+		worldTranslateList[i] = XMFLOAT3(
+			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumWorldTranslateList / 10, 
+			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumWorldTranslateList / 10, 
+			(static_cast<float>(rand()) - static_cast<float>(rand())) / RAND_MAX * nNumWorldTranslateList / 10);	
+		worldList[i] = XMMatrixIdentity() * XMMatrixTranslation(worldTranslateList[i].x, worldTranslateList[i].y, worldTranslateList[i].z);
 	}
 
 	HRESULT hr;
@@ -139,7 +144,7 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 	}
 
 	hr = InitSentenceVertexAndIndexBuffer(
-		(fpsText + to_string(GetFPS(startTime, fps, tCount)) + cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter))).c_str(),
+		(fpsText + to_string(GetFPS(startTime, fps, tCount)) + cubeText + std::to_string(cube) + cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter))).c_str(),
 		-width / 2 + offsetX, height / 2 - offsetY, fonts, pD3DDevice,
 		&pFontVertexBufferObject, &pFontIndexBufferObject,
 		sentenceVertexNum, fontVertice, fontIndices);
@@ -155,35 +160,42 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 			DispatchMessage(&msg);
 		}
 
+		pD3DImmediateContext->ClearRenderTargetView(pD3DRenderTargetView, backgroundColor);
+		pD3DImmediateContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+		cube = 0;
+
+		for (int i = 0; i < nNumWorldTranslateList; ++i) {
+			worldTranslateList[i] = XMFLOAT3(worldTranslateList[i].x , worldTranslateList[i].y , worldTranslateList[i].z + 0.03f);
+			worldList[i] *= XMMatrixTranslation(0.0f , 0.0f , 0.03f);
+			if (CheckCube(viewPlanes, worldTranslateList[i].x, worldTranslateList[i].y, worldTranslateList[i].z, 0.5f)) {				
+				matrix3d.world = worldList[i];
+				Update3DModelWorld(matrix3d, pMatrixDBuffer3D, &pD3DImmediateContext);
+				DrawModelIndex(
+					cubeVertexNum,
+					pCubeVertexBufferObject,
+					pCubeIndexBufferObject,
+					pMatrixDBuffer3D,
+					pCubeSamplerState,
+					pCubeShaderResourceView,
+					pCubeVertexShader,
+					pCubePixelShader,
+					pCubeInputLayout,
+					pDepthStencilView,
+					pEnableDepthStencilState,
+					&pD3DRenderTargetView,
+					&pD3DImmediateContext);
+				++cube;
+			}
+		}	
+
 		UpdateSentenceVertexAndIndexBuffer(
-			(fpsText + to_string(GetFPS(startTime, fps, tCount)) + cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter))).c_str(),
+			(fpsText + to_string(GetFPS(startTime, fps, tCount)) + cubeText + std::to_string(cube) + cpuText + to_string(GetCPUUsage(canSample, cpuUsage, lastSampleTime, hQuery, hCounter))).c_str(),
 			-width / 2 + offsetX, height / 2 - offsetY, fonts,
 			&pFontVertexBufferObject, &pFontIndexBufferObject, &pD3DImmediateContext,
 			sentenceVertexNum, fontVertice, fontIndices);	
 
-		pD3DImmediateContext->ClearRenderTargetView(pD3DRenderTargetView, backgroundColor);
-		pD3DImmediateContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-		for (int i = 0 ; i < nNumList ; ++i) {
-			Update3DModelPos(matrix3dList[i], pMatrixDBuffer3D, &pD3DImmediateContext);
-			DrawModelIndex(
-			cubeVertexNum,
-			pCubeVertexBufferObject,
-			pCubeIndexBufferObject,
-			pMatrixDBuffer3D,
-			pCubeSamplerState,
-			pCubeShaderResourceView,
-			pCubeVertexShader,
-			pCubePixelShader,
-			pCubeInputLayout,
-			pDepthStencilView,
-			pEnableDepthStencilState,
-			&pD3DRenderTargetView,
-			&pD3DImmediateContext);
-		}
-
-		
-
+		//MessageBox(nullptr, std::to_string(cot).c_str(), "NOTE", MB_OK);
 		DrawModelIndex(
 			sentenceVertexNum,
 			pFontVertexBufferObject,
