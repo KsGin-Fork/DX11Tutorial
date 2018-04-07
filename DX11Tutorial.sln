@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Multitexturing
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-TextureMaps", "DX11Tutorial-TextureMaps\DX11Tutorial-TextureMaps.vcxproj", "{419314E0-0CE4-4080-AC17-B115A9819D4B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-BumpMapping", "DX11Tutorial-BumpMapping\DX11Tutorial-BumpMapping.vcxproj", "{809D8D23-F968-463D-BD47-A4C1C40E20CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -176,6 +178,14 @@ Global
 		{419314E0-0CE4-4080-AC17-B115A9819D4B}.Release|x64.Build.0 = Release|x64
 		{419314E0-0CE4-4080-AC17-B115A9819D4B}.Release|x86.ActiveCfg = Release|Win32
 		{419314E0-0CE4-4080-AC17-B115A9819D4B}.Release|x86.Build.0 = Release|Win32
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Debug|x64.ActiveCfg = Debug|x64
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Debug|x64.Build.0 = Debug|x64
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Debug|x86.ActiveCfg = Debug|Win32
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Debug|x86.Build.0 = Debug|Win32
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Release|x64.ActiveCfg = Release|x64
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Release|x64.Build.0 = Release|x64
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Release|x86.ActiveCfg = Release|Win32
+		{809D8D23-F968-463D-BD47-A4C1C40E20CC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
