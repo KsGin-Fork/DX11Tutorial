@@ -3,7 +3,7 @@ SamplerState samp;
 
 struct pixelInputType {
 	float4 pos : SV_POSITION;
-	float2 texcoord : TEXCOORD0;
+	float2 texcoord : TEXCOORD;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 	float3 bitangent : BITANGENT;
@@ -11,11 +11,18 @@ struct pixelInputType {
 
 
 float4 main(pixelInputType input) : SV_TARGET{
+	float3 lightDir;
+	float4 bumpMap;
+	float4 texColor;
+	float3 bumpNormal;
+	float color;
+	lightDir = normalize(float3(-1.0f, -1.0f, 1.0f));
+	bumpMap = tex[1].Sample(samp, input.texcoord);	
+	bumpMap = bumpMap * 2.0f - 1.0f;
+	bumpNormal = (bumpMap.x * input.tangent) + (bumpMap.y * input.bitangent) + (bumpMap.z * input.normal);	
+	bumpNormal = normalize(bumpNormal);
+	color = dot(bumpNormal , -lightDir);
+	texColor = tex[0].Sample(samp, input.texcoord);
 
-	float3 lightDir = float3(0.0f, 0.0f, -1.0f);
-
-	float4 bumpMap = (tex[1].Sample(samp, input.texcoord) * 2.0f) - 1.0f;
-	float3 bumpNormal = normalize((bumpMap.x * input.tangent) + (bumpMap.y * input.bitangent) + (bumpMap.z * input.normal));
-	float color = saturate(dot(input.normal , lightDir));
-	return (color + 0.3f) * tex[0].Sample(samp, input.texcoord);
+	return color * float4(1.0f,1.0f,1.0f,1.0f) * texColor;
 } 

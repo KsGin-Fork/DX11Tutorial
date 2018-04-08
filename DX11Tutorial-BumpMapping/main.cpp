@@ -74,7 +74,7 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 	MatrixXD matrix3d = {
 	XMMatrixIdentity() ,
 	XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 0.0f , -2.0f , 0.0f),
+		XMVectorSet(1.0f, 1.0f , -1.0f , 0.0f),
 		XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
 		XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
 	),
@@ -161,7 +161,7 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 		pD3DImmediateContext->ClearRenderTargetView(pD3DRenderTargetView, backgroundColor);
 		pD3DImmediateContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-		matrix3d.world *= XMMatrixRotationY(0.0001f);
+		matrix3d.world *= XMMatrixRotationY(0.0001);
 		Update3DModelWorld(matrix3d, pMatrixDBuffer3D, &pD3DImmediateContext);
 		DrawModelIndex(
 			cubeVertexNum,

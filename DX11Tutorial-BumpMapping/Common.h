@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include <D3DX10math.h>
 #include <vector>
+#include <minwinbase.h>
 
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -25,16 +26,12 @@ using namespace std;
 using namespace DirectX;
 
 struct Vertex {
-	XMFLOAT3 pos{};
-	XMFLOAT2 tex{};
-	XMFLOAT3 nor{};
-	XMFLOAT3 tgt{};
-	XMFLOAT3 bit{};
-	Vertex() {}
-	Vertex(XMFLOAT3&& p, XMFLOAT2&& t) {
-		pos = p;
-		tex = t;
-	}
+	XMFLOAT3 pos;
+	XMFLOAT2 tex;
+	FLOAT p;
+	XMFLOAT3 nor;
+	XMFLOAT3 tgt;
+	XMFLOAT3 bit;
 };
 
 struct MatrixXD {
@@ -285,13 +282,13 @@ inline HRESULT InitShader(
 	ID3D10Blob* pVertexShaderBlob = nullptr;
 	ID3D10Blob* pPixelShaderBlob = nullptr;
 
-	hr = D3DX11CompileFromFile(vertexShaderName, nullptr, nullptr, "main", "vs_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile(vertexShaderName, nullptr, nullptr, "main", "vs_5_0", D3D10_SHADER_DEBUG, 0, nullptr, &pVertexShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
 		else MessageBox(NULL, "vertexShader File Not Found", "Error", MB_OK);
 		return hr;
 	}
-	hr = D3DX11CompileFromFile(pixelShaderName, nullptr, nullptr, "main", "ps_5_0", D3DCOMPILER_STRIP_DEBUG_INFO, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
+	hr = D3DX11CompileFromFile(pixelShaderName, nullptr, nullptr, "main", "ps_5_0", D3D10_SHADER_DEBUG, 0, nullptr, &pPixelShaderBlob, &pErrorMessage, nullptr);
 	if (FAILED(hr)) {
 		if (pErrorMessage) MessageBox(NULL, static_cast<CHAR*>(pErrorMessage->GetBufferPointer()), "Error", MB_OK);
 		else MessageBox(NULL, "pixelShader File Not Found", "Error", MB_OK);
@@ -339,13 +336,31 @@ inline HRESULT InitShader(
 		}
 	}
 
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 } ,
-		{ "BITANGENT", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
+	D3D11_INPUT_ELEMENT_DESC layout[5];
+	ZeroMemory(&layout[0], sizeof(layout[0]));
+	layout[0].SemanticName = "POSITION";
+	layout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	layout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	ZeroMemory(&layout[1], sizeof(layout[1]));
+	layout[1].SemanticName = "TEXCOORD";
+	layout[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	layout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	layout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	ZeroMemory(&layout[2], sizeof(layout[2]));
+	layout[2].SemanticName = "NORMAL";
+	layout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	layout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	layout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	ZeroMemory(&layout[3], sizeof(layout[3]));
+	layout[3].SemanticName = "TANGENT";
+	layout[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	layout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	layout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	ZeroMemory(&layout[4], sizeof(layout[4]));
+	layout[4].SemanticName = "BITANGENT";
+	layout[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	layout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	layout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	const UINT numElements = ARRAYSIZE(layout);
 	hr = pDevice->CreateInputLayout(layout, numElements, pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), pInputLayout);
 	if (FAILED(hr)) {
@@ -389,7 +404,7 @@ inline HRESULT Init3DConstant(
 inline HRESULT CalculateTangentAndBiTangent(Vertex *&vertices, UINT *&indices, const UINT nNumIndices) {
 	const UINT faceCount = nNumIndices / 3;
 	FLOAT edge1[3], edge2[3];
-	FLOAT deltaU[2], deltaV[2];
+	FLOAT tuVector[2], tvVector[2];
 	XMFLOAT3 tangent, bitangent, normal;
 	FLOAT f, l;
 	for (UINT i = 0; i < faceCount; ++i) {
@@ -405,26 +420,26 @@ inline HRESULT CalculateTangentAndBiTangent(Vertex *&vertices, UINT *&indices, c
 		edge2[2] = v3.pos.z - v1.pos.z;
 
 		/////////////////////////////////////////////// UV
-		deltaU[0] = v2.tex.x - v1.tex.x;
-		deltaV[0] = v2.tex.y - v1.tex.y;
-		deltaU[1] = v3.tex.x - v1.tex.x;
-		deltaV[1] = v3.tex.y - v1.tex.y;
+		tuVector[0] = v2.tex.x - v1.tex.x;
+		tvVector[0] = v2.tex.y - v1.tex.y;
+		tuVector[1] = v3.tex.x - v1.tex.x;
+		tvVector[1] = v3.tex.y - v1.tex.y;
 
 		/////////////////////////////////////////////// f
-		f = 1.0f / (deltaU[0] * deltaV[1] - deltaU[1] * deltaV[0]);
+		f = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
 
-		tangent.x = (deltaV[1] * edge1[0] - deltaV[0] * edge2[0]) * f;
-		tangent.y = (deltaV[1] * edge1[1] - deltaV[0] * edge2[1]) * f;
-		tangent.z = (deltaV[1] * edge1[2] - deltaV[0] * edge2[2]) * f;
+		tangent.x = (tvVector[1] * edge1[0] - tvVector[0] * edge2[0]) * f;
+		tangent.y = (tvVector[1] * edge1[1] - tvVector[0] * edge2[1]) * f;
+		tangent.z = (tvVector[1] * edge1[2] - tvVector[0] * edge2[2]) * f;
 		l = sqrt(tangent.x * tangent.x + tangent.y * tangent.y + tangent.z * tangent.z);
 		tangent.x /= l;
 		tangent.y /= l;
 		tangent.z /= l;
 		v1.tgt = v2.tgt = v3.tgt = XMFLOAT3(tangent.x, tangent.y, tangent.z);
 
-		bitangent.x = (deltaU[0] * edge2[0] - deltaU[1] * edge1[0]) * f;
-		bitangent.y = (deltaU[0] * edge2[1] - deltaU[1] * edge1[1]) * f;
-		bitangent.z = (deltaU[0] * edge2[2] - deltaU[1] * edge1[2]) * f;
+		bitangent.x = (tuVector[0] * edge2[0] - tuVector[1] * edge1[0]) * f;
+		bitangent.y = (tuVector[0] * edge2[1] - tuVector[1] * edge1[1]) * f;
+		bitangent.z = (tuVector[0] * edge2[2] - tuVector[1] * edge1[2]) * f;
 		l = sqrt(bitangent.x * bitangent.x + bitangent.y * bitangent.y + bitangent.z * bitangent.z);
 		bitangent.x /= l;
 		bitangent.y /= l;
@@ -462,76 +477,54 @@ inline HRESULT InitCubeVertexAndIndexBuffer(
 		indices = nullptr;
 	}
 
-	vertices = new Vertex[36]{
-		//font
-		Vertex(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1)),
-		//back
-		Vertex(XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(1, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(1, 1)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0)),
-		//top
-		Vertex(XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(1, 1)),
-		//bottom
-		Vertex(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(0, 0)),
-		//left
-		Vertex(XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, +0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, +0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(-0.5f, +0.5f, -0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT2(1, 1)),
-		//right
-		Vertex(XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, -0.5f), XMFLOAT2(0, 0)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, -0.5f), XMFLOAT2(0, 1)),
-		Vertex(XMFLOAT3(+0.5f, +0.5f, +0.5f), XMFLOAT2(1, 0)),
-		Vertex(XMFLOAT3(+0.5f, -0.5f, +0.5f), XMFLOAT2(1, 1))
-	};
+	vertices = new Vertex[36];
+	//font
+	vertices[0 ].pos = XMFLOAT3(-0.5f, -0.5f, -0.5f); vertices[0 ].tex = XMFLOAT2(0, 1);
+	vertices[1 ].pos = XMFLOAT3(-0.5f, +0.5f, -0.5f); vertices[1 ].tex = XMFLOAT2(0, 0);
+	vertices[2 ].pos = XMFLOAT3(+0.5f, +0.5f, -0.5f); vertices[2 ].tex = XMFLOAT2(1, 0);
+	vertices[3 ].pos = XMFLOAT3(-0.5f, -0.5f, -0.5f); vertices[3 ].tex = XMFLOAT2(0, 1);
+	vertices[4 ].pos = XMFLOAT3(+0.5f, +0.5f, -0.5f); vertices[4 ].tex = XMFLOAT2(1, 0);
+	vertices[5 ].pos = XMFLOAT3(+0.5f, -0.5f, -0.5f); vertices[5 ].tex = XMFLOAT2(1, 1);
+	//back	   												     
+	vertices[6 ].pos = XMFLOAT3(-0.5f, -0.5f, +0.5f); vertices[6 ].tex = XMFLOAT2(1, 1);
+	vertices[7 ].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[7 ].tex = XMFLOAT2(0, 0);
+	vertices[8 ].pos = XMFLOAT3(-0.5f, +0.5f, +0.5f); vertices[8 ].tex = XMFLOAT2(1, 0);
+	vertices[9 ].pos = XMFLOAT3(-0.5f, -0.5f, +0.5f); vertices[9 ].tex = XMFLOAT2(1, 1);
+	vertices[10].pos = XMFLOAT3(+0.5f, -0.5f, +0.5f); vertices[10].tex = XMFLOAT2(0, 1);
+	vertices[11].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[11].tex = XMFLOAT2(0, 0);
+	//top
+	vertices[12].pos = XMFLOAT3(-0.5f, +0.5f, -0.5f); vertices[12].tex = XMFLOAT2(0, 1);
+	vertices[13].pos = XMFLOAT3(-0.5f, +0.5f, +0.5f); vertices[13].tex = XMFLOAT2(0, 0);
+	vertices[14].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[14].tex = XMFLOAT2(1, 0);
+	vertices[15].pos = XMFLOAT3(-0.5f, +0.5f, -0.5f); vertices[15].tex = XMFLOAT2(0, 1);
+	vertices[16].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[16].tex = XMFLOAT2(1, 0);
+	vertices[17].pos = XMFLOAT3(+0.5f, +0.5f, -0.5f); vertices[17].tex = XMFLOAT2(1, 1);
+	//bottom
+	vertices[18].pos = XMFLOAT3(-0.5f, -0.5f, -0.5f); vertices[18].tex = XMFLOAT2(1, 1);
+	vertices[19].pos = XMFLOAT3(+0.5f, -0.5f, +0.5f); vertices[19].tex = XMFLOAT2(0, 0);
+	vertices[20].pos = XMFLOAT3(-0.5f, -0.5f, +0.5f); vertices[20].tex = XMFLOAT2(1, 0);
+	vertices[21].pos = XMFLOAT3(-0.5f, -0.5f, -0.5f); vertices[21].tex = XMFLOAT2(1, 1);
+	vertices[22].pos = XMFLOAT3(+0.5f, -0.5f, -0.5f); vertices[22].tex = XMFLOAT2(0, 1);
+	vertices[23].pos = XMFLOAT3(+0.5f, -0.5f, +0.5f); vertices[23].tex = XMFLOAT2(0, 0);
+	//left
+	vertices[24].pos = XMFLOAT3(-0.5f, -0.5f, +0.5f); vertices[24].tex = XMFLOAT2(0, 1);
+	vertices[25].pos = XMFLOAT3(-0.5f, +0.5f, +0.5f); vertices[25].tex = XMFLOAT2(0, 0);
+	vertices[26].pos = XMFLOAT3(-0.5f, +0.5f, -0.5f); vertices[26].tex = XMFLOAT2(1, 0);
+	vertices[27].pos = XMFLOAT3(-0.5f, -0.5f, +0.5f); vertices[27].tex = XMFLOAT2(0, 1);
+	vertices[28].pos = XMFLOAT3(-0.5f, +0.5f, -0.5f); vertices[28].tex = XMFLOAT2(1, 0);
+	vertices[29].pos = XMFLOAT3(-0.5f, -0.5f, -0.5f); vertices[29].tex = XMFLOAT2(1, 1);
+	//right
+	vertices[30].pos = XMFLOAT3(+0.5f, -0.5f, -0.5f); vertices[30].tex = XMFLOAT2(0, 1);
+	vertices[31].pos = XMFLOAT3(+0.5f, +0.5f, -0.5f); vertices[31].tex = XMFLOAT2(0, 0);
+	vertices[32].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[32].tex = XMFLOAT2(1, 0);
+	vertices[33].pos = XMFLOAT3(+0.5f, -0.5f, -0.5f); vertices[33].tex = XMFLOAT2(0, 1);
+	vertices[34].pos = XMFLOAT3(+0.5f, +0.5f, +0.5f); vertices[34].tex = XMFLOAT2(1, 0);
+	vertices[35].pos = XMFLOAT3(+0.5f, -0.5f, +0.5f); vertices[35].tex = XMFLOAT2(1, 1);
 
 	indices = new UINT[36];
-	for (int i = 0; i < 36; ++i) {
+	for (UINT i = 0; i < 36; ++i) {
 		indices[i] = i;
 	}
-
-	//	indices = new UINT[36]{
-	//		// front face
-	//		0, 1, 2,
-	//		0, 2, 3,
-	//		// back face
-	//		4, 6, 5,
-	//		4, 7, 6,
-	//		// top face
-	//		8, 9, 10,
-	//		8, 10, 11,
-	//		// bottom face
-	//		12, 14, 13,
-	//		12, 15, 14,
-	//		// left face
-	//		16, 17, 18,
-	//		16, 18, 19,
-	//		// right face
-	//		20, 21, 22,
-	//		20, 22, 23,
-	//	};
 
 	hr = CalculateTangentAndBiTangent(vertices, indices, 36);
 	if (FAILED(hr)) {
@@ -546,21 +539,21 @@ inline HRESULT InitCubeVertexAndIndexBuffer(
 
 	D3D11_SUBRESOURCE_DATA verticesSourceData;
 	ZeroMemory(&verticesSourceData, sizeof(D3D11_SUBRESOURCE_DATA));
-
 	verticesSourceData.pSysMem = vertices;
+
 	pDevice->CreateBuffer(&vertexBufferDesc, &verticesSourceData, pVertexBufferObject);
 	if (FAILED(hr)) {
 		return hr;
 	}
 
 	D3D11_BUFFER_DESC indexDesc;
-	ZeroMemory(&indexDesc, sizeof(indexDesc));
-	indexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ZeroMemory(&indexDesc, sizeof(D3D11_BUFFER_DESC));
+	indexDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexDesc.ByteWidth = sizeof(UINT) * 36;
 
 	D3D11_SUBRESOURCE_DATA indexData;
-	ZeroMemory(&indexData, sizeof(indexData));
+	ZeroMemory(&indexData, sizeof(D3D11_SUBRESOURCE_DATA));
 	indexData.pSysMem = indices;
 
 	hr = pDevice->CreateBuffer(&indexDesc, &indexData, pIndexBufferObject);
