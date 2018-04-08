@@ -23,6 +23,6 @@ pixelInputType main( vertexInputType input ){
 	output.pos = mul(output.pos , view);
 	output.pos = mul(output.pos , projection);
 	output.texcoord = input.texcoord;
-	output.normal = mul(input.normal , world);
+	output.normal = mul(input.normal , (float3x3)world);
 	return output;
 }
