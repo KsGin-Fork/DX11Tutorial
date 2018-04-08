@@ -24,7 +24,7 @@ struct pixelInputType {
 pixelInputType main( vertexInputType input ){
 	pixelInputType output;
 	float4 worldPosition;
-	float3 cameraPos = float3(0.0f, 0.0f, -1.0f);
+	float3 cameraPos = float3(1.0f, 1.0f, -1.0f);
 
 	output.pos = input.pos;	
 	output.pos = mul(output.pos, world);
@@ -42,8 +42,8 @@ pixelInputType main( vertexInputType input ){
 	output.bitangent = mul(input.bitangent, (float3x3)world);
 	output.bitangent = normalize(output.bitangent);
 
-	worldPosition = mul(input.pos, world);
-	output.viewDir = cameraPos - worldPosition.xyz;
+	worldPosition = mul(worldPosition, world);
+	output.viewDir = cameraPos - output.pos.xyz;
 	output.viewDir = normalize(output.viewDir);
 
 	return output;

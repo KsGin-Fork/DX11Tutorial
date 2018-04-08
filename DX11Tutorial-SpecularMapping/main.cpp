@@ -75,7 +75,7 @@ int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpC
 	MatrixXD matrix3d = {
 	XMMatrixIdentity() ,
 	XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 0.0f , -2.0f , 0.0f),
+		XMVectorSet(1.0f, 1.0f , -1.0f , 0.0f),
 		XMVectorSet(0.0f, 0.0f ,  0.0f , 0.0f),
 		XMVectorSet(0.0f, 1.0f ,  0.0f , 0.0f)
 	),
