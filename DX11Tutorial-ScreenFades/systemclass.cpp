@@ -152,7 +152,7 @@ bool SystemClass::Frame()
 	}
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(10.0f);
+	result = m_Graphics->Frame(5.0f);
 	if(!result)
 	{
 		return false;
