@@ -19,8 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="d3dclass.h" />
+    <ClInclude Include="fadeShaderClass.h" />
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="modelclass.h" />
@@ -31,8 +33,10 @@
     <ClInclude Include="textureshaderclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
+    <ClCompile Include="fadeShaderClass.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="main.cpp" />
@@ -44,10 +48,20 @@
     <ClCompile Include="textureshaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="reflection.ps" />
-    <None Include="reflection.vs" />
-    <None Include="texture.ps" />
-    <None Include="texture.vs" />
+    <FxCompile Include="texturePixelShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="textureVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\blue01.dds" />
@@ -56,6 +70,29 @@
   <ItemGroup>
     <Text Include="data\cube.txt" />
     <Text Include="data\floor.txt" />
+    <Text Include="shader-error.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="fadePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="fadeVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

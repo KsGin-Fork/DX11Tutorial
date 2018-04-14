@@ -46,9 +46,9 @@ void CameraClass::SetRotation(float x, float y, float z)
 
 void CameraClass::Render()
 {
-	XMFLOAT3 up{};
-	XMFLOAT3 position{};
-	XMFLOAT3 lookAt{};
+	XMFLOAT3 up;
+	XMFLOAT3 position;
+	XMFLOAT3 lookAt;
 	float radians;
 
 
@@ -83,7 +83,6 @@ void CameraClass::Render()
 void CameraClass::GetViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
-	return;
 }
 
 
@@ -117,8 +116,6 @@ void CameraClass::RenderReflection(float height)
 		XMVectorSet(position.x, position.y, position.z, 0.0f),
 		XMVectorSet(lookAt.x, lookAt.y, lookAt.z, 0.0f),
 		XMVectorSet(up.x, up.y, up.z, 0.0f));
-
-	return;
 }
 
 

@@ -51,6 +51,12 @@
     <ClInclude Include="textureshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bitmapclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fadeShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cameraclass.cpp">
@@ -84,20 +90,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="reflection.ps">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="texture.ps">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="reflection.vs">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="texture.vs">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
+    <ClCompile Include="bitmapclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fadeShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\blue01.dds">
@@ -114,5 +112,22 @@
     <Text Include="data\floor.txt">
       <Filter>Resource Files\Data</Filter>
     </Text>
+    <Text Include="shader-error.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="fadeVertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="fadePixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="texturePixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="textureVertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
