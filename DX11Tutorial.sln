@@ -54,6 +54,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Reflection", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-ScreenFades", "DX11Tutorial-ScreenFades\DX11Tutorial-ScreenFades.vcxproj", "{913B4A8B-99EF-4ACE-B751-53B90B460CA8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Water", "DX11Tutorial-Water\DX11Tutorial-Water.vcxproj", "{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -246,6 +248,14 @@ Global
 		{913B4A8B-99EF-4ACE-B751-53B90B460CA8}.Release|x64.Build.0 = Release|x64
 		{913B4A8B-99EF-4ACE-B751-53B90B460CA8}.Release|x86.ActiveCfg = Release|Win32
 		{913B4A8B-99EF-4ACE-B751-53B90B460CA8}.Release|x86.Build.0 = Release|Win32
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Debug|x64.ActiveCfg = Debug|x64
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Debug|x64.Build.0 = Debug|x64
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Debug|x86.ActiveCfg = Debug|Win32
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Debug|x86.Build.0 = Debug|Win32
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Release|x64.ActiveCfg = Release|x64
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Release|x64.Build.0 = Release|x64
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Release|x86.ActiveCfg = Release|Win32
+		{7935CB19-FF61-4C87-AEC8-6DEDE65E65EE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
