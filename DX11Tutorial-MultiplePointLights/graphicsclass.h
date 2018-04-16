@@ -45,8 +45,8 @@ private:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass *m_GroundModel, *m_WallModel, *m_BathModel, *m_WaterModel;
-	LightClass* m_Light;
+	ModelClass *m_Model;
+	LightClass *m_Light1 , *m_Light2 , *m_Light3 , *m_Light4;
 	LightShaderClass* m_LightShader;
 };
 
