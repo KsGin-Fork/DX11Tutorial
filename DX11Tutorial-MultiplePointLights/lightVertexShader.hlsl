@@ -1,7 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: refraction.vs
+// Filename: light.vs
 ////////////////////////////////////////////////////////////////////////////////
 
+/////////////
+// DEFINES //
+/////////////
+
+#define NUM_LIGHTS 4
 
 /////////////
 // GLOBALS //
@@ -13,11 +18,10 @@ cbuffer MatrixBuffer
 	matrix projectionMatrix;
 };
 
-cbuffer ClipPlaneBuffer
+cbuffer LightPositionBuffer 
 {
-    float4 clipPlane;
+	float4 lightPosition[NUM_LIGHTS];
 };
-
 
 //////////////
 // TYPEDEFS //
@@ -34,14 +38,13 @@ struct PixelInputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
-	float clip : SV_ClipDistance0;
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType RefractionVertexShader(VertexInputType input)
+PixelInputType LightVertexShader(VertexInputType input)
 {
     PixelInputType output;
     
@@ -63,8 +66,5 @@ PixelInputType RefractionVertexShader(VertexInputType input)
 	// Normalize the normal vector.
 	output.normal = normalize(output.normal);
 	
-	// Set the clipping plane.
-    output.clip = dot(mul(input.position, worldMatrix), clipPlane);
-
     return output;
 }
