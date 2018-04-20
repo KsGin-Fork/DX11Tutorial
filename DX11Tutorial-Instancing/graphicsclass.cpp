@@ -9,7 +9,6 @@ GraphicsClass::GraphicsClass()
 	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;
-	m_FloorModel = 0;
 	m_TextureShader = 0;
 }
 
@@ -68,22 +67,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the wall model object.
-	m_FloorModel = new ModelClass;
-	if(!m_FloorModel)
-	{
-		return false;
-	}
-
-	char grid01_dds[] = "./data/grid01.dds";
-	char floor_txt[] = "./data/floor.txt";
-	// Initialize the floor model object.
-	result = m_FloorModel->Initialize(m_D3D->GetDevice(), grid01_dds, floor_txt);
-	if(!result)
-	{
-		MessageBox(hwnd, "Could not initialize the floor model object.", "Error", MB_OK);
-		return false;
-	}
 
 	m_TextureShader = new TextureShaderClass;
 	if (!m_TextureShader) {
@@ -102,13 +85,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the Floor Model object.
-	if(m_FloorModel)
-	{
-		m_FloorModel->Shutdown();
-		delete m_FloorModel;
-		m_FloorModel = 0;
-	}
 
 	// Release the BillBoarding Model object.
 	if(m_Model)
@@ -148,9 +124,7 @@ bool GraphicsClass::Frame()
 	bool result;
 
 	// Set the position and rotation of the camera.
-	m_Camera->SetPosition(20.0f , 2.0f , -10.0f);
-	m_Camera->SetRotation(0.0f, -45.0f, 0.0f);
-	//m_Camera->SetPosition(0.0f , 2.0f , -20.0f);
+	m_Camera->SetPosition(0.0f , 1.0f , -20.0f);
 	result = Render();
 	if (!result) {
 		return false;
@@ -164,9 +138,6 @@ bool GraphicsClass::Render()
 {	
 	DirectX::XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
-	XMFLOAT3 cameraPosition, modelPosition;
-	double angle;
-	float rotation;
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -177,34 +148,13 @@ bool GraphicsClass::Render()
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
-
 	m_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix *= XMMatrixScaling(5.0f, 1.0f, 5.0f);
-	m_FloorModel->Render(m_D3D->GetDeviceContext());
-	result = m_TextureShader->Render(
-		m_D3D->GetDeviceContext(), 
-		m_FloorModel->GetIndexCount(), 
-		worldMatrix, viewMatrix, projectionMatrix, 
-		m_FloorModel->GetTexture());
-	if (!result) {
-		return false;
-	}
 
-
-	m_Camera->GetPosition(cameraPosition);
-	modelPosition = XMFLOAT3(0.0f, 1.5f, 1.0f);
-
-	angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0f / XM_PI);
-
-	rotation = angle * 0.0174532925f;
-
-	m_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix *= XMMatrixTranslation(modelPosition.x, modelPosition.y, modelPosition.z);
-	worldMatrix *= XMMatrixRotationY(rotation);
 	m_Model->Render(m_D3D->GetDeviceContext());
 	result = m_TextureShader->Render(
 		m_D3D->GetDeviceContext(), 
-		m_Model->GetIndexCount(), 
+		m_Model->GetVertexCount(), 
+		m_Model->GetInstanceCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, 
 		m_Model->GetTexture());
 	if (!result) {

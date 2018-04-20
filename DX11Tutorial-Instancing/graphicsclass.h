@@ -3,7 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef _GRAPHICSCLASS_H_
 #define _GRAPHICSCLASS_H_
-#include "../DX11Tutorial-ScreenFades/textureshaderclass.h"
 
 
 /////////////
@@ -21,6 +20,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
+#include "textureshaderclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass *m_FloorModel, *m_Model;
+	ModelClass *m_Model;
 	TextureShaderClass *m_TextureShader;
 };
 

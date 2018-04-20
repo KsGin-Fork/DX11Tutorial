@@ -64,6 +64,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Fire", "DX11Tu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-BillBoarding", "DX11Tutorial-BillBoarding\DX11Tutorial-BillBoarding.vcxproj", "{7223334A-3D17-4AFD-9E19-8AF50F3DB7E3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Instancing", "DX11Tutorial-Instancing\DX11Tutorial-Instancing.vcxproj", "{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -296,6 +298,14 @@ Global
 		{7223334A-3D17-4AFD-9E19-8AF50F3DB7E3}.Release|x64.Build.0 = Release|x64
 		{7223334A-3D17-4AFD-9E19-8AF50F3DB7E3}.Release|x86.ActiveCfg = Release|Win32
 		{7223334A-3D17-4AFD-9E19-8AF50F3DB7E3}.Release|x86.Build.0 = Release|Win32
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Debug|x64.ActiveCfg = Debug|x64
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Debug|x64.Build.0 = Debug|x64
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Debug|x86.ActiveCfg = Debug|Win32
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Debug|x86.Build.0 = Debug|Win32
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Release|x64.ActiveCfg = Release|x64
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Release|x64.Build.0 = Release|x64
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Release|x86.ActiveCfg = Release|Win32
+		{37825235-A8CC-4C5B-9F0A-EF3196CC35AF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
