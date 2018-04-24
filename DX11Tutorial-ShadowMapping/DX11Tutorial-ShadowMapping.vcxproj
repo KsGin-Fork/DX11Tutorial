@@ -50,14 +50,15 @@
     <ClCompile Include="timerclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="data\cube.txt" />
-    <Text Include="data\plane01.txt" />
-    <Text Include="data\sphere.txt" />
+    <Image Include="data\blue01.dds" />
+    <Image Include="data\grate.dds" />
+    <Image Include="data\seafloor.dds" />
+    <Image Include="data\stone.dds" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="data\ice.dds" />
-    <Image Include="data\metal001.dds" />
-    <Image Include="data\wall01.dds" />
+    <Text Include="data\cube.txt" />
+    <Text Include="data\floor.txt" />
+    <Text Include="shader-error.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="depth.ps" />

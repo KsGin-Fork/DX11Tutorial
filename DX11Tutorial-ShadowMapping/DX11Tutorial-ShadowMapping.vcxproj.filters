@@ -104,26 +104,29 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="data\blue01.dds">
+      <Filter>Resource Files\Data</Filter>
+    </Image>
+    <Image Include="data\grate.dds">
+      <Filter>Resource Files\Data</Filter>
+    </Image>
+    <Image Include="data\seafloor.dds">
+      <Filter>Resource Files\Data</Filter>
+    </Image>
+    <Image Include="data\stone.dds">
+      <Filter>Resource Files\Data</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
     <Text Include="data\cube.txt">
       <Filter>Resource Files\Data</Filter>
     </Text>
-    <Text Include="data\plane01.txt">
+    <Text Include="data\floor.txt">
       <Filter>Resource Files\Data</Filter>
     </Text>
-    <Text Include="data\sphere.txt">
-      <Filter>Resource Files\Data</Filter>
+    <Text Include="shader-error.txt">
+      <Filter>Resource Files</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="data\ice.dds">
-      <Filter>Resource Files\Data</Filter>
-    </Image>
-    <Image Include="data\metal001.dds">
-      <Filter>Resource Files\Data</Filter>
-    </Image>
-    <Image Include="data\wall01.dds">
-      <Filter>Resource Files\Data</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="depth.ps">
