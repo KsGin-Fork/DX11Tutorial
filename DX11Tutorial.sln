@@ -76,6 +76,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-ProjectedLight
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-ShadowMapping", "DX11Tutorial-ShadowMapping\DX11Tutorial-ShadowMapping.vcxproj", "{882829BE-BE4B-4577-8FF6-B98D11AA7B18}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-MultipleLightShadowMapping", "DX11Tutorial-MultipleLightShadowMapping\DX11Tutorial-MultipleLightShadowMapping.vcxproj", "{08CC52E8-923A-4D9F-9DB5-142BB5C02704}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -356,6 +358,14 @@ Global
 		{882829BE-BE4B-4577-8FF6-B98D11AA7B18}.Release|x64.Build.0 = Release|x64
 		{882829BE-BE4B-4577-8FF6-B98D11AA7B18}.Release|x86.ActiveCfg = Release|Win32
 		{882829BE-BE4B-4577-8FF6-B98D11AA7B18}.Release|x86.Build.0 = Release|Win32
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Debug|x64.ActiveCfg = Debug|x64
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Debug|x64.Build.0 = Debug|x64
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Debug|x86.ActiveCfg = Debug|Win32
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Debug|x86.Build.0 = Debug|Win32
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Release|x64.ActiveCfg = Release|x64
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Release|x64.Build.0 = Release|x64
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Release|x86.ActiveCfg = Release|Win32
+		{08CC52E8-923A-4D9F-9DB5-142BB5C02704}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
