@@ -9,8 +9,7 @@
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-#include <d3dx10math.h>
-
+#include <DirectXMath.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: RenderTextureClass
@@ -28,8 +27,8 @@ public:
 	void SetRenderTarget(ID3D11DeviceContext*);
 	void ClearRenderTarget(ID3D11DeviceContext*, float, float, float, float);
 	ID3D11ShaderResourceView* GetShaderResourceView();
-	void GetProjectionMatrix(D3DXMATRIX&);
-	void GetOrthoMatrix(D3DXMATRIX&);
+	void GetProjectionMatrix(DirectX::XMMATRIX&);
+	void GetOrthoMatrix(DirectX::XMMATRIX&);
 
 private:
 	ID3D11Texture2D* m_renderTargetTexture;
@@ -38,8 +37,8 @@ private:
 	ID3D11Texture2D* m_depthStencilBuffer;
 	ID3D11DepthStencilView* m_depthStencilView;
 	D3D11_VIEWPORT m_viewport;
-	D3DXMATRIX m_projectionMatrix;
-	D3DXMATRIX m_orthoMatrix;
+	DirectX::XMMATRIX m_projectionMatrix;
+	DirectX::XMMATRIX m_orthoMatrix;
 
 };
 

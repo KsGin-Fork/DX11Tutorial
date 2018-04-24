@@ -21,21 +21,21 @@ LightClass::~LightClass()
 
 void LightClass::SetAmbientColor(float red, float green, float blue, float alpha)
 {
-	m_ambientColor = D3DXVECTOR4(red, green, blue, alpha);
+	m_ambientColor = DirectX::XMFLOAT4(red, green, blue, alpha);
 	return;
 }
 
 
 void LightClass::SetDiffuseColor(float red, float green, float blue, float alpha)
 {
-	m_diffuseColor = D3DXVECTOR4(red, green, blue, alpha);
+	m_diffuseColor = DirectX::XMFLOAT4(red, green, blue, alpha);
 	return;
 }
 
 
 void LightClass::SetPosition(float x, float y, float z)
 {
-	m_position = D3DXVECTOR3(x, y, z);
+	m_position = DirectX::XMFLOAT3(x, y, z);
 	return;
 }
 
@@ -49,19 +49,19 @@ void LightClass::SetLookAt(float x, float y, float z)
 }
 
 
-D3DXVECTOR4 LightClass::GetAmbientColor()
+DirectX::XMFLOAT4 LightClass::GetAmbientColor()
 {
 	return m_ambientColor;
 }
 
 
-D3DXVECTOR4 LightClass::GetDiffuseColor()
+DirectX::XMFLOAT4 LightClass::GetDiffuseColor()
 {
 	return m_diffuseColor;
 }
 
 
-D3DXVECTOR3 LightClass::GetPosition()
+DirectX::XMFLOAT3 LightClass::GetPosition()
 {
 	return m_position;
 }
@@ -69,7 +69,7 @@ D3DXVECTOR3 LightClass::GetPosition()
 
 void LightClass::GenerateViewMatrix()
 {
-	D3DXVECTOR3 up;
+	DirectX::XMFLOAT3 up;
 
 
 	// Setup the vector that points upwards.
@@ -78,7 +78,7 @@ void LightClass::GenerateViewMatrix()
 	up.z = 0.0f;
 
 	// Create the view matrix from the three vectors.
-	D3DXMatrixLookAtLH(&m_viewMatrix, &m_position, &m_lookAt, &up);
+	m_viewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&m_position), DirectX::XMLoadFloat3(&m_lookAt), DirectX::XMLoadFloat3(&up));
 	
 	return;
 }
@@ -94,20 +94,20 @@ void LightClass::GenerateProjectionMatrix(float screenDepth, float screenNear)
 	screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
+	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
 
 	return;
 }
 
 
-void LightClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
+void LightClass::GetViewMatrix(DirectX::XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
 	return;
 }
 
 
-void LightClass::GetProjectionMatrix(D3DXMATRIX& projectionMatrix)
+void LightClass::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = m_projectionMatrix;
 	return;

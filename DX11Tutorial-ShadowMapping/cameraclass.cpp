@@ -44,39 +44,33 @@ void CameraClass::SetRotation(float x, float y, float z)
 }
 
 
-D3DXVECTOR3 CameraClass::GetPosition()
+DirectX::XMFLOAT3 CameraClass::GetPosition()
 {
-	return D3DXVECTOR3(m_positionX, m_positionY, m_positionZ);
+	return DirectX::XMFLOAT3(m_positionX, m_positionY, m_positionZ);
 }
 
 
-D3DXVECTOR3 CameraClass::GetRotation()
+DirectX::XMFLOAT3 CameraClass::GetRotation()
 {
-	return D3DXVECTOR3(m_rotationX, m_rotationY, m_rotationZ);
+	return DirectX::XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
 }
 
 
 void CameraClass::Render()
 {
-	D3DXVECTOR3 up, position, lookAt;
+	DirectX::XMVECTOR up, position, lookAt;
 	float yaw, pitch, roll;
-	D3DXMATRIX rotationMatrix;
+	DirectX::XMMATRIX rotationMatrix;
 
 
 	// Setup the vector that points upwards.
-	up.x = 0.0f;
-	up.y = 1.0f;
-	up.z = 0.0f;
+	up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
 	// Setup the position of the camera in the world.
-	position.x = m_positionX;
-	position.y = m_positionY;
-	position.z = m_positionZ;
+	position = DirectX::XMVectorSet(m_positionX, m_positionY, m_positionZ, 1.0f);
 
 	// Setup where the camera is looking by default.
-	lookAt.x = 0.0f;
-	lookAt.y = 0.0f;
-	lookAt.z = 1.0f;
+	lookAt = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
 	pitch = m_rotationX * 0.0174532925f;
@@ -84,23 +78,22 @@ void CameraClass::Render()
 	roll  = m_rotationZ * 0.0174532925f;
 
 	// Create the rotation matrix from the yaw, pitch, and roll values.
-	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
+	rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
 	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
-	D3DXVec3TransformCoord(&lookAt, &lookAt, &rotationMatrix);
-	D3DXVec3TransformCoord(&up, &up, &rotationMatrix);
+	lookAt = DirectX::XMVector3TransformCoord(lookAt, rotationMatrix);
+	up = DirectX::XMVector3TransformCoord(up, rotationMatrix);
 
 	// Translate the rotated camera position to the location of the viewer.
-	lookAt = position + lookAt;
-
+	lookAt = DirectX::XMVectorAdd(position, lookAt); 
 	// Finally create the view matrix from the three updated vectors.
-	D3DXMatrixLookAtLH(&m_viewMatrix, &position, &lookAt, &up);
+	m_viewMatrix = DirectX::XMMatrixLookAtLH(position, lookAt, up);
 
 	return;
 }
 
 
-void CameraClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
+void CameraClass::GetViewMatrix(DirectX::XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
 	return;

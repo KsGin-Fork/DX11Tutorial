@@ -9,6 +9,7 @@
 // INCLUDES //
 //////////////
 #include <d3dx10math.h>
+#include <DirectXMath.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,24 +26,24 @@ public:
 	void SetDiffuseColor(float, float, float, float);
 	void SetPosition(float, float, float);
 	void SetLookAt(float, float, float);
-
-	D3DXVECTOR4 GetAmbientColor();
-	D3DXVECTOR4 GetDiffuseColor();
-	D3DXVECTOR3 GetPosition();
+	
+	DirectX::XMFLOAT4 GetAmbientColor();
+	DirectX::XMFLOAT4 GetDiffuseColor();
+	DirectX::XMFLOAT3 GetPosition();
 
 	void GenerateViewMatrix();
 	void GenerateProjectionMatrix(float, float);
 
-	void GetViewMatrix(D3DXMATRIX&);
-	void GetProjectionMatrix(D3DXMATRIX&);
+	void GetViewMatrix(DirectX::XMMATRIX&);
+	void GetProjectionMatrix(DirectX::XMMATRIX&);
 
 private:
-	D3DXVECTOR4 m_ambientColor;
-	D3DXVECTOR4 m_diffuseColor;
-	D3DXVECTOR3 m_position;
-	D3DXVECTOR3 m_lookAt;
-	D3DXMATRIX m_viewMatrix;
-	D3DXMATRIX m_projectionMatrix;
+	DirectX::XMFLOAT4 m_ambientColor;
+	DirectX::XMFLOAT4 m_diffuseColor;
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT3 m_lookAt;
+	DirectX::XMMATRIX m_viewMatrix;
+	DirectX::XMMATRIX m_projectionMatrix;
 };
 
 #endif

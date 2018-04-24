@@ -53,10 +53,10 @@ void ShadowShaderClass::Shutdown()
 }
 
 
-bool ShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-							   D3DXMATRIX projectionMatrix, D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, 
-							   ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, D3DXVECTOR3 lightPosition, 
-							   D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
+bool ShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, 
+							   DirectX::XMMATRIX projectionMatrix, DirectX::XMMATRIX lightViewMatrix, DirectX::XMMATRIX lightProjectionMatrix, 
+							   ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, DirectX::XMFLOAT3 lightPosition, 
+							   DirectX::XMFLOAT4 ambientColor, DirectX::XMFLOAT4 diffuseColor)
 {
 	bool result;
 
@@ -369,10 +369,10 @@ void ShadowShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND 
 }
 
 
-bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
-											D3DXMATRIX projectionMatrix, D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix, 
-											ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, D3DXVECTOR3 lightPosition,
-											D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
+bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, 
+											DirectX::XMMATRIX projectionMatrix, DirectX::XMMATRIX lightViewMatrix, DirectX::XMMATRIX lightProjectionMatrix, 
+											ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, DirectX::XMFLOAT3 lightPosition,
+											DirectX::XMFLOAT4 ambientColor, DirectX::XMFLOAT4 diffuseColor)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -383,11 +383,11 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 
 
 	// Transpose the matrices to prepare them for the shader.
-	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
-	D3DXMatrixTranspose(&lightViewMatrix, &lightViewMatrix);
-	D3DXMatrixTranspose(&lightProjectionMatrix, &lightProjectionMatrix);
+	worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
+	viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
+	projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
+	lightViewMatrix = DirectX::XMMatrixTranspose(lightViewMatrix);
+	lightProjectionMatrix = DirectX::XMMatrixTranspose(lightProjectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -8,10 +8,10 @@
 //////////////
 // INCLUDES //
 //////////////
-#include <d3d11.h>
-#include <d3dx10math.h>
-#include <d3dx11async.h>
+#include <D3D11.h>
+#include <D3DX11async.h>
 #include <fstream>
+#include <DirectXMath.h>
 using namespace std;
 
 
@@ -23,9 +23,9 @@ class DepthShaderClass
 private:
 	struct MatrixBufferType
 	{
-		D3DXMATRIX world;
-		D3DXMATRIX view;
-		D3DXMATRIX projection;
+		DirectX::XMMATRIX world;
+		DirectX::XMMATRIX view;
+		DirectX::XMMATRIX projection;
 	};
 
 public:
@@ -35,14 +35,14 @@ public:
 
 	bool Initialize(ID3D11Device*, HWND);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+	bool Render(ID3D11DeviceContext*, int, DirectX::XMMATRIX, DirectX::XMMATRIX, DirectX::XMMATRIX);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, CHAR*, CHAR*);
 	void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, CHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX);
+	bool SetShaderParameters(ID3D11DeviceContext*, DirectX::XMMATRIX, DirectX::XMMATRIX, DirectX::XMMATRIX);
 	void RenderShader(ID3D11DeviceContext*, int);
 
 private:
