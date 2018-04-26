@@ -1,0 +1,39 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: depth.ps
+////////////////////////////////////////////////////////////////////////////////
+
+SamplerState samplerType : register(s0);
+Texture2D shaderTexture : register(t0);
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float4 depthPosition : TEXTURE0;
+	float2 tex : TEXCOORD0;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 DepthPixelShader(PixelInputType input) : SV_TARGET
+{
+	float depthValue;
+	float4 color;
+	
+	// Get the alpha value from the texture
+	float alpha = shaderTexture.Sample(samplerType , input.tex).a;
+	
+	// discard render if the alpha less than 0.8
+	if(alpha < 0.8) discard;
+	
+	// Get the depth value of the pixel by dividing the Z pixel depth by the homogeneous W coordinate.
+	depthValue = input.depthPosition.z / input.depthPosition.w;
+
+	color = float4(depthValue, depthValue, depthValue, 1.0f);
+
+	return color;
+}

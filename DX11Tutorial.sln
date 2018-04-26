@@ -82,6 +82,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-Picking", "DX1
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DirectionalShadowMaps", "DX11Tutorial-DirectionalShadowMaps\DX11Tutorial-DirectionalShadowMaps.vcxproj", "{E87C2B4B-90BD-4D48-B8C4-ADB0C222892C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-ShadowMappingAndTransparency", "DX11Tutorial-ShadowMappingAndTransparency\DX11Tutorial-ShadowMappingAndTransparency.vcxproj", "{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -386,6 +388,14 @@ Global
 		{E87C2B4B-90BD-4D48-B8C4-ADB0C222892C}.Release|x64.Build.0 = Release|x64
 		{E87C2B4B-90BD-4D48-B8C4-ADB0C222892C}.Release|x86.ActiveCfg = Release|Win32
 		{E87C2B4B-90BD-4D48-B8C4-ADB0C222892C}.Release|x86.Build.0 = Release|Win32
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Debug|x64.ActiveCfg = Debug|x64
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Debug|x64.Build.0 = Debug|x64
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Debug|x86.ActiveCfg = Debug|Win32
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Debug|x86.Build.0 = Debug|Win32
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x64.ActiveCfg = Release|x64
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x64.Build.0 = Release|x64
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x86.ActiveCfg = Release|Win32
+		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
