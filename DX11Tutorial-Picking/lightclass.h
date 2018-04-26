@@ -9,7 +9,6 @@
 // INCLUDES //
 //////////////
 #include <d3dx10math.h>
-#include <DirectXMath.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,28 +21,15 @@ public:
 	LightClass(const LightClass&);
 	~LightClass();
 
-	void SetAmbientColor(float, float, float, float);
 	void SetDiffuseColor(float, float, float, float);
-	void SetPosition(float, float, float);
-	void SetLookAt(float, float, float);
-	
-	DirectX::XMFLOAT4 GetAmbientColor();
-	DirectX::XMFLOAT4 GetDiffuseColor();
-	DirectX::XMFLOAT3 GetPosition();
+	void SetDirection(float, float, float);
 
-	void GenerateViewMatrix();
-	void GenerateProjectionMatrix(float, float);
-
-	void GetViewMatrix(DirectX::XMMATRIX&);
-	void GetProjectionMatrix(DirectX::XMMATRIX&);
+	D3DXVECTOR4 GetDiffuseColor();
+	D3DXVECTOR3 GetDirection();
 
 private:
-	DirectX::XMFLOAT4 m_ambientColor;
-	DirectX::XMFLOAT4 m_diffuseColor;
-	DirectX::XMFLOAT3 m_position;
-	DirectX::XMFLOAT3 m_lookAt;
-	DirectX::XMMATRIX m_viewMatrix;
-	DirectX::XMMATRIX m_projectionMatrix;
+	D3DXVECTOR4 m_diffuseColor;
+	D3DXVECTOR3 m_direction;
 };
 
 #endif

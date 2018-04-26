@@ -18,8 +18,10 @@
 // INCLUDES //
 //////////////
 #include <dxgi.h>
+#include <d3dcommon.h>
 #include <d3d11.h>
-#include <DirectXMath.h>
+#include <d3dx10math.h>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: D3DClass
@@ -40,14 +42,16 @@ public:
 	ID3D11Device* GetDevice();
 	ID3D11DeviceContext* GetDeviceContext();
 
-	void GetProjectionMatrix(DirectX::XMMATRIX&);
-	void GetWorldMatrix(DirectX::XMMATRIX&);
-	void GetOrthoMatrix(DirectX::XMMATRIX&);
+	void GetProjectionMatrix(D3DXMATRIX&);
+	void GetWorldMatrix(D3DXMATRIX&);
+	void GetOrthoMatrix(D3DXMATRIX&);
 
 	void GetVideoCardInfo(char*, int&);
 
-	void SetBackBufferRenderTarget();
-	void ResetViewport();
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+	void EnableAlphaBlending();
+	void DisableAlphaBlending();
 
 private:
 	bool m_vsync_enabled;
@@ -61,10 +65,12 @@ private:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
-	DirectX::XMMATRIX m_projectionMatrix;
-	DirectX::XMMATRIX m_worldMatrix;
-	DirectX::XMMATRIX m_orthoMatrix;
-	D3D11_VIEWPORT m_viewport;
+	D3DXMATRIX m_projectionMatrix;
+	D3DXMATRIX m_worldMatrix;
+	D3DXMATRIX m_orthoMatrix;
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
+	ID3D11BlendState* m_alphaEnabledBlendState;
+	ID3D11BlendState* m_alphaDisabledBlendState;
 };
 
 #endif
