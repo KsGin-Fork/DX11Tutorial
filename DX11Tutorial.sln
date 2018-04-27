@@ -84,6 +84,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DirectionalSha
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-ShadowMappingAndTransparency", "DX11Tutorial-ShadowMappingAndTransparency\DX11Tutorial-ShadowMappingAndTransparency.vcxproj", "{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Tutorial-DeferredShading", "DX11Tutorial-DeferredShading\DX11Tutorial-DeferredShading.vcxproj", "{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -396,6 +398,14 @@ Global
 		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x64.Build.0 = Release|x64
 		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x86.ActiveCfg = Release|Win32
 		{90DCC1B8-6D70-43E7-8CA7-4DD83E4ECBE9}.Release|x86.Build.0 = Release|Win32
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Debug|x64.ActiveCfg = Debug|x64
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Debug|x64.Build.0 = Debug|x64
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Debug|x86.ActiveCfg = Debug|Win32
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Debug|x86.Build.0 = Debug|Win32
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Release|x64.ActiveCfg = Release|x64
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Release|x64.Build.0 = Release|x64
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Release|x86.ActiveCfg = Release|Win32
+		{1ABAEFD9-56B5-46FA-B34C-FB7C086B945C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
